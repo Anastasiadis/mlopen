@@ -26,7 +26,10 @@ SECRET_KEY = '#@17uq5sd4(^hwv5+86n15u*ji(p4n*9y@0b&o)&xh9zx3@m0z'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+]
 
 
 # Application definition
@@ -38,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'mlopenapp.apps.MlopenappConfig'
 ]
 
 MIDDLEWARE = [
@@ -121,6 +125,11 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.1/howto/static-files/
-
+# https://docs.djangoproject.com/en/1.11/howto/static-files/
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+
+# App Constants
+
+VERBOSE = False

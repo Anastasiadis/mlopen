@@ -7,6 +7,7 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
 from nltk.corpus import stopwords
+from django.conf import settings
 import matplotlib.pyplot as plt
 import contractions
 """
@@ -36,12 +37,15 @@ lemmas = [
 # Vectorization
 """
 
+tools_init = [False]
 
-def initialize_tools():
-    nltk.download('averaged_perceptron_tagger')
-    nltk.download('wordnet')
-    nltk.download('punkt')
-    nltk.download('stopwords')
+def initialize_tools(ti=tools_init):
+    if not ti[0]:
+        nltk.download('averaged_perceptron_tagger')
+        nltk.download('wordnet')
+        nltk.download('punkt')
+        nltk.download('stopwords')
+        ti[0] = True
 
 
 # function to convert nltk tag to wordnet tag
@@ -102,7 +106,8 @@ def lemmatize(tokens):
 
 
 def process_text(text, verbose=False):
-    if verbose: print("Pre Word processing text: {}".format(text))
+    if verbose:
+        print("Pre Word processing text: {}".format(text))
     initialize_tools()
     text = to_lower(text)
     text = rm_word_repetition(text)
@@ -112,9 +117,22 @@ def process_text(text, verbose=False):
     tokens = remove_stop_words(tokens)
     tokens = only_alpha(tokens)
     tokens = lemmatize(tokens)
-    if verbose: print("Post Word processing text: {}".format(str(tokens)))
+    if verbose:
+        print("Post Word processing text: {}".format(str(tokens)))
     return tokens
 
 
+def process_text_df(df, *args):
+    for arg in args:
+        print(len(list(df.items())))
+        for i, text in df[arg].items():
+            tokens = process_text(text)
+            df[arg].at[i] = tokens
+            print(tokens)
+    if True:
+        print("Proccessing text in DataFrame:")
+        print(df)
+    return df
 
-process_text("That's NOT what I'm saying or said!!! I sould not be telling you this, but I run and while running I fell..", True)
+
+#process_text("That's NOT what I'm saying or said!!! I sould not be telling you this, but I run and while running I fell..", True)
