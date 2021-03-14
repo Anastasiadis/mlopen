@@ -93,14 +93,12 @@ def only_alpha(tokens):
     return tokens
 
 
-def lemmatize(tokens):
+def lemmatize(tokens, verbose=False):
     lemmatizer = WordNetLemmatizer()
     tokens = nltk.pos_tag(tokens)
-    print(tokens)
+    if verbose:
+        print(tokens)
     for i, token in enumerate(tokens):
-        print(token)
-        print(token[1])
-        print(nltk_to_wn(token[1]))
         tokens[i] = lemmatizer.lemmatize(token[0], nltk_to_wn(token[1]))
     return tokens
 
@@ -124,14 +122,9 @@ def process_text(text, verbose=False):
 
 def process_text_df(df, *args):
     for arg in args:
-        print(len(list(df.items())))
         for i, text in df[arg].items():
             tokens = process_text(text)
             df[arg].at[i] = tokens
-            print(tokens)
-    if True:
-        print("Proccessing text in DataFrame:")
-        print(df)
     return df
 
 

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  font-family: "Lato", sans-serif;
+}
+
+.sidenav {
+  height: 100%;
+  width: 200px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #339944;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+.sidenav a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #f1f1f1;
+  display: block;
+}
+
+.sidenav a:hover {
+  color: #ffffaa;
+}
+
+.main {
+  margin-left: 200px; /* Same as the width of the sidenav */
+  font-size: 28px; /* Increased text to enable scrolling */
+  padding: 0px 10px;
+}
+
+.icon {
+    background: url('your-image-url.jpg');
+    height: 20px;
+    width: 20px;
+    display: block;
+    /* Other styles here */
+}
+
+[class^="icon"] {
+  height: 50px;
+  width: 50px;
+  position: relative;
+  top: 15px;
+  fill: #fff;
+}
+
+[class^="img"] {
+  height: 200px;
+  width: 200px;
+  position: relative;
+  fill: #fff;
+}
+
+hr {
+  background-color: #ffffff;
+  color: #44aa55;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+</style>
+</head>
+<body>
+
+<div class="sidenav">
+    <img class="img_start" src="{% static '/images/mlicon.png' %}" alt="""/>
+  <hr/>
+  <a href="#start"><img class="icon_start" src="{% static '/images/mlicon.png' %}" alt="""/>Start Page</a>
+  <a href="#services"><img class="icon_data" src="{% static '/images/dataicon.png' %}" alt="""/>Data</a>
+  <a href="#clients"><img class="icon_pipeline" src="{% static '/images/pipeicon.png' %}" alt="""/>Pipeliness</a>
+</div>
+
+<div class="main">
+  <h2>This Page is Under Construction</h2>
+  <p>Please browse the "pipelines" folder of the app to see backend progress.</p>
+</div>
+
+</body>
+</html>
