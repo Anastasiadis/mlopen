@@ -15,6 +15,7 @@ def prepare_data():
 
 def read_from_dir(dir, sentiment=None):
     data = []
+    cnt = 0
     for filename in os.listdir(dir):
         with open(os.path.join(dir, filename), 'r') as f:
             text = f.read()
@@ -22,6 +23,9 @@ def read_from_dir(dir, sentiment=None):
                 data.append([text, sentiment])
             else:
                 data.append(text)
+            cnt += 1
+            if cnt > 300:
+                break
     df = pd.DataFrame(data, columns=['text', 'sentiment'])
     #print(df)
     return df

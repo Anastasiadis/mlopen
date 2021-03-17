@@ -1,14 +1,21 @@
 import os
 import csv
 import pandas as pd
-from text_preprocessing import process_df
-from input.text_files_input import prepare_data
+import prepare_data as pdt
+import text_preprocessing as tpp
 
 
-def prepare_data():
-    df = prepare_data()
-    df = process_df(df, 'text')
-    print(df)
+def prepare_data(*args):
+    for arg in args:
+        tfidf, model = pdt.get_model(arg)
+        print(tfidf)
+        s1 = "I didn't like this movie. It left me with a strange taste that made me feel weird. It wasn't scary at all."
+        #s1 = tpp.process_text(s1)
+        #s1 = tfidf.transform(s1)
+        #pred = model.predict(s1)
+        #print(pred)
 
 
-prepare_data()
+
+
+prepare_data('text')

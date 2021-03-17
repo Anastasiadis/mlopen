@@ -12,7 +12,14 @@ import matplotlib.pyplot as plt
 import contractions
 
 from input import text_files_input as tfi
-import vectorization as vct, text_preprocessing as tpp
+import vectorization as vct,\
+    text_preprocessing as tpp, \
+    logistic_regression as lr, \
+    frequencies as frq
+
+"""
+Function to calculate pos-neg frequencies
+"""
 
 
 def get_model(*args, verbose=False):
@@ -29,11 +36,9 @@ def get_model(*args, verbose=False):
         print("Create Vector. . .")
         for i, corp in df[arg].items():
             corpus.append(corp)
-        vector[arg] = vct.bag_of_words(corpus)
-    if True:
-        print("Get model:")
-        print(df)
-        print(vector)
+        vector[arg] = vct.tf_idf(corpus)
+        freqs = frq.build_freqs(df[arg].tolist(), df['sentiment'].tolist())
+        x_posneg = frq.get_posneg(df[arg].tolist(), freqs)
+        s_a_model = lr.log_reg(x_posneg, df['sentiment'].tolist())
+        return vector[arg], s_a_model
 
-
-get_model('text')
