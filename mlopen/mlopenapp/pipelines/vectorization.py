@@ -15,4 +15,4 @@ def fit_tf_idf(corpus):
 def tf_idf(corpus):
     tfidf = fit_tf_idf(corpus)
     tfidf_mtx = tfidf.transform(corpus)
-    return tfidf_mtx
+    return tfidf, tfidf_mtx
