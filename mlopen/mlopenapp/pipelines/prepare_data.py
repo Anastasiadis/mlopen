@@ -33,13 +33,12 @@ def get_model(*args, verbose=False):
         df = tpp.process_text_df(df, arg)
         print("Create Corpus. . .")
         corpus = []
-        print("Create Vector. . .")
         for i, corp in df[arg].items():
             corpus.append(corp)
+        print("Create Vector. . .")
         tfidf[arg], vector[arg] = vct.tf_idf(corpus)
         #freqs = frq.build_freqs(corpus, df['sentiment'].tolist())
         #x_pn = [frq.statement_to_freq(txt, freqs) for txt in corpus]
         #x_posneg = frq.get_posneg(corpus, freqs)
         s_a_model = lr.log_reg(vector[arg], df['sentiment'].tolist())
         return tfidf[arg], vector[arg], s_a_model
-

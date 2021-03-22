@@ -5,37 +5,37 @@ import prepare_data as pdt
 import text_preprocessing as tpp
 
 
-def prepare_data(*args):
+def make_model(*args):
     for arg in args:
         tfidf, vector, model = pdt.get_model(arg)
         print(tfidf)
         print(vector)
         print(model)
-
-        s1 = ["Idiot worse evil bad puke sad.",
-              "Best, the absolute greater beautiful movie!",
-              "This movie was SICK!!! I was stunned by the plot twist in the end! I didn't expect it!",
-              "Worst movie of all time. Awful actors, stupid plot, horrible ending.",
-              "I didn't like this movie. It left me with a strange taste that made me feel weird. It wasn't scary at all."
-             ]
-        for s in s1:
-            print(s)
-            print(predict_text(s, tfidf, model))
-        #s1 = tpp.process_text(s1)
-        #s1 = tfidf.transform(s1)
-        #pred = model.predict(s1)
-        #print(pred)
+        return tfidf, vector, model
 
 
-def predict_text(text, tfidf, model):
-    text = tpp.process_text(text)
+def make_prediction(input, tfidf, model, processed=False):
+    for statement in input:
+        print(statement)
+        print(predict_text(statement, tfidf, model, processed))
+
+
+def predict_text(text, tfidf, model, processed=False):
+    if not processed:
+        text = tpp.process_text(text)
     transformed_text = tfidf.transform([text])
     prediction = model.predict(transformed_text)
     print(prediction)
-    if prediction == 1:
-        return "Prediction is positive sentiment"
-    else:
-        return "Prediction is negative sentiment"
+    return prediction
 
 
-prepare_data('text')
+s1 = ["Idiot worse evil bad puke sad.",
+      "Best, the absolute greater beautiful movie!",
+      "This movie was SICK!!! I was stunned by the plot twist in the end! I didn't expect it!",
+      "Worst movie of all time. Awful actors, stupid plot, horrible ending.",
+      "I didn't like this movie. It left me with a strange taste that made me feel weird. It wasn't scary at all.",
+      "I guess the begining was fine, but it declined rapidly after 20 minutes. The movie isn't worth the ticket price - just watch it when it's free on television, or maybe not even then",
+      "The only thing in this abyssymal, good for nothing movie, that the fact that it is short and you don't have to suffer for long."
+      ]
+model_tup = make_model('text')
+make_prediction(s1, model_tup[0], model_tup[2])

@@ -133,4 +133,3 @@ def process_text_list(lst):
         tokens = process_text(text)
         lst[i] = tokens
     return lst
-#process_text("That's NOT what I'm saying or said!!! I sould not be telling you this, but I run and while running I fell..", True)

@@ -10,8 +10,8 @@ def prepare_data():
         os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir, os.pardir,
                      'data/user_data/train/neg/'), 0)
     df = pd.concat([df1, df2], ignore_index=True)
-    #print(df)
     return(df)
+
 
 def read_from_dir(dir, sentiment=None):
     data = []
@@ -27,7 +27,6 @@ def read_from_dir(dir, sentiment=None):
             if cnt > 2000:
                 break
     df = pd.DataFrame(data, columns=['text', 'sentiment'])
-    #print(df)
     return df
 
 
@@ -66,10 +65,3 @@ def get_from_csvs(dir=None, csvs=None):
         for cs in csvs[1:]:
             df = pd.concat([df, pd.read_csv(cs)], ignore_index=True)
         return df
-
-
-
-#print(os.path.join(os.pardir, 'data/user_data/train/pos/'))
-#read_from_dir(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir, os.pardir, 'data/user_data/train/pos/'), 1)
-#read_from_dir(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir, os.pardir, 'data/user_data/train/neg/'), 0)
-#prepare_data()
