@@ -1,16 +1,3 @@
-import spacy
-import numpy as np
-import pandas as pd
-import re
-import nltk
-from nltk.tokenize import word_tokenize
-from nltk.stem import WordNetLemmatizer
-from nltk.corpus import wordnet
-from nltk.corpus import stopwords
-from django.conf import settings
-import matplotlib.pyplot as plt
-import contractions
-
 from input import text_files_input as tfi
 import vectorization as vct,\
     text_preprocessing as tpp, \

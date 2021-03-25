@@ -37,9 +37,14 @@ lemmas = [
 # Vectorization
 """
 
+# State of tool initialization
 tools_init = [False]
 
+
 def initialize_tools(ti=tools_init):
+    """
+    Initialize relevant tools
+    """
     if not ti[0]:
         nltk.download('averaged_perceptron_tagger')
         nltk.download('wordnet')
@@ -48,8 +53,10 @@ def initialize_tools(ti=tools_init):
         ti[0] = True
 
 
-# function to convert nltk tag to wordnet tag
 def nltk_to_wn(nltk_tag):
+    """
+    Function to convert nltk tag to wordnet tag
+    """
     if nltk_tag.startswith('J'):
         return wordnet.ADJ
     elif nltk_tag.startswith('V'):
@@ -63,37 +70,61 @@ def nltk_to_wn(nltk_tag):
 
 
 def to_lower(text):
+    """
+    Converts text to lowercase
+    """
     return text.lower()
 
 
 def rm_word_repetition(text):
+    """
+    Replace subsequent letters with a length of more than 2
+    """
     return re.sub(r'(.)\1+', r'\1\1', text)
 
 
 def rm_punctuation_repetition(text):
+    """
+    Removes redundant punctuation
+    """
     return re.sub(r'[\?\.\!]+(?=[\?\.\!])', "", text)
 
 
 def replace_contractions(text):
+    """
+    Expands contractions
+    """
     return contractions.fix(text)
 
 
 def tokenize_text(text):
+    """
+    Turns a statement to discrete tokens (words)
+    """
     return word_tokenize(text)
 
 
 def remove_stop_words(tokens):
+    """
+    Remove stopwords from a list of tokens
+    """
     stop_words = set(stopwords.words('english'))
     tokens = [token for token in tokens if token not in stop_words]
     return tokens
 
 
 def only_alpha(tokens):
+    """
+    Exclude non-alphanumeric tokens from a list of tokens
+    """
     tokens = [token for token in tokens if token.isalpha()]
     return tokens
 
 
 def lemmatize(tokens, verbose=False):
+    """
+    Lemmatization of a list of tokens
+    """
     lemmatizer = WordNetLemmatizer()
     tokens = nltk.pos_tag(tokens)
     if verbose:
@@ -104,6 +135,9 @@ def lemmatize(tokens, verbose=False):
 
 
 def process_text(text, verbose=False):
+    """
+    Process a single statement
+    """
     if verbose:
         print("Pre Word processing text: {}".format(text))
     initialize_tools()
@@ -121,6 +155,9 @@ def process_text(text, verbose=False):
 
 
 def process_text_df(df, *args):
+    """
+    Process one or more Dataframe columns containing tokenized statements
+    """
     for arg in args:
         for i, text in df[arg].items():
             tokens = process_text(text)
@@ -129,6 +166,9 @@ def process_text_df(df, *args):
 
 
 def process_text_list(lst):
+    """
+        Process list containing tokenized statements
+     """
     for i, text in enumerate(lst):
         tokens = process_text(text)
         lst[i] = tokens
