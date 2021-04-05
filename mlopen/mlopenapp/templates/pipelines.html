@@ -1,0 +1,446 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block main %}
+
+<style>
+body {
+  font-family: "Lato", sans-serif;
+}
+
+.sidenav {
+  height: 100%;
+  width: 200px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #031511;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+.sidenav2 {
+  height: 100%;
+  width: 8px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 200px;
+  background-color: #559966;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+.sidenav a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 18 px;
+  color: #f1f1f1;
+  display: block;
+}
+
+.sidenav a:hover {
+  color: #dd6622;
+}
+
+.main {
+  margin-left: 208px;
+  font-size: 12px;
+  padding: 0px 10px;
+}
+
+.icon {
+    background: url('your-image-url.jpg');
+    height: 16px;
+    width: 16px;
+    display: block;
+    /* Other styles here */
+}
+
+[class^="icon"] {
+  height: 42px;
+  width: 42 px;
+  position: relative;
+  top: 15px;
+  fill: #fff;
+}
+
+[class^="img"] {
+  height: 120px;
+  width: 120px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  fill: #fff;
+}
+
+hr {
+  background-color: #dddddd;
+  color: #dddddd;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+
+.container {margin-left: 208px; text-align: center;}
+.left {
+  display: inline-block;
+  *display: inline;
+  zoom: 1;
+  width: 25%;
+  padding: 0px;
+  background: #dddddd;
+}
+
+.left p {
+  height: 40px;
+  color: #031511;
+  font-size: 18px;
+  text-align: center;
+  background: #eeeeee;
+  width: 100%;
+  }
+
+.left a {
+  height: 40px;
+  color: #031511;
+  background: #dddddd;
+  font-size: 24px;
+  text-align: center;
+  width: 100%;
+  }
+
+.left button {
+  float: right;
+  background-color:#559966;
+  color:#ffffff;
+  font-size:30px;
+}
+
+.left input {
+  float: right;
+  background-color:#559966;
+  color:#ffffff;
+  font-size:30px;
+}
+
+.rcorners {
+  border-radius: 5px;
+  border: 2px solid #cccccc;
+
+}
+
+button {
+  background-color:#559966;
+  color:#ffffff;
+  font-size:30px;
+}
+
+#main_content {
+    margin-left: 208px;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.075);
+}
+
+.table-primary,
+.table-primary > th,
+.table-primary > td {
+  background-color: #b8daff;
+}
+
+.table-hover .table-primary:hover {
+  background-color: #9fcdff;
+}
+
+.table-hover .table-primary:hover > td,
+.table-hover .table-primary:hover > th {
+  background-color: #9fcdff;
+}
+
+.table-secondary,
+.table-secondary > th,
+.table-secondary > td {
+  background-color: #d6d8db;
+}
+
+.table-hover .table-secondary:hover {
+  background-color: #c8cbcf;
+}
+
+.table-hover .table-secondary:hover > td,
+.table-hover .table-secondary:hover > th {
+  background-color: #c8cbcf;
+}
+
+.table-success,
+.table-success > th,
+.table-success > td {
+  background-color: #c3e6cb;
+}
+
+.table-hover .table-success:hover {
+  background-color: #b1dfbb;
+}
+
+.table-hover .table-success:hover > td,
+.table-hover .table-success:hover > th {
+  background-color: #b1dfbb;
+}
+
+.table-info,
+.table-info > th,
+.table-info > td {
+  background-color: #bee5eb;
+}
+
+.table-hover .table-info:hover {
+  background-color: #abdde5;
+}
+
+.table-hover .table-info:hover > td,
+.table-hover .table-info:hover > th {
+  background-color: #abdde5;
+}
+
+.table-warning,
+.table-warning > th,
+.table-warning > td {
+  background-color: #ffeeba;
+}
+
+.table-hover .table-warning:hover {
+  background-color: #ffe8a1;
+}
+
+.table-hover .table-warning:hover > td,
+.table-hover .table-warning:hover > th {
+  background-color: #ffe8a1;
+}
+
+.table-danger,
+.table-danger > th,
+.table-danger > td {
+  background-color: #f5c6cb;
+}
+
+.table-hover .table-danger:hover {
+  background-color: #f1b0b7;
+}
+
+.table-hover .table-danger:hover > td,
+.table-hover .table-danger:hover > th {
+  background-color: #f1b0b7;
+}
+
+.table-light,
+.table-light > th,
+.table-light > td {
+  background-color: #fdfdfe;
+}
+
+.table-hover .table-light:hover {
+  background-color: #ececf6;
+}
+
+.table-hover .table-light:hover > td,
+.table-hover .table-light:hover > th {
+  background-color: #ececf6;
+}
+
+.table-dark,
+.table-dark > th,
+.table-dark > td {
+  background-color: #c6c8ca;
+}
+
+.table-hover .table-dark:hover {
+  background-color: #b9bbbe;
+}
+
+.table-hover .table-dark:hover > td,
+.table-hover .table-dark:hover > th {
+  background-color: #b9bbbe;
+}
+
+.table-active,
+.table-active > th,
+.table-active > td {
+  background-color: rgba(0, 0, 0, 0.075);
+}
+
+.table-hover .table-active:hover {
+  background-color: rgba(0, 0, 0, 0.075);
+}
+
+.table-hover .table-active:hover > td,
+.table-hover .table-active:hover > th {
+  background-color: rgba(0, 0, 0, 0.075);
+}
+
+.table .thead-dark th {
+  color: #fff;
+  background-color: #212529;
+  border-color: #32383e;
+}
+
+.table .thead-light th {
+  color: #495057;
+  background-color: #e9ecef;
+  border-color: #dee2e6;
+}
+
+.table-dark {
+  color: #fff;
+  background-color: #212529;
+}
+
+.table-dark th,
+.table-dark td,
+.table-dark thead th {
+  border-color: #32383e;
+}
+
+.table-dark.table-bordered {
+  border: 0;
+}
+
+.table-dark.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.table-dark.table-hover tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.075);
+}
+
+.styled-table {
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.styled-table thead tr {
+    background-color: #559966;
+    color: #ffffff;
+    text-align: left;
+}
+
+.styled-table th,
+.styled-table td {
+    padding: 12px 15px;
+}
+
+.styled-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.styled-table tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
+}
+
+.styled-table tbody tr.active-row {
+    font-weight: bold;
+    color: #009879;
+}
+
+div.DTE_Footer_Content {
+        position: relative;
+    }
+
+    div.DTE_Form_Buttons {
+        float: right;
+    }
+
+    div.DTE div.DTE_Form_Buttons button {
+        float: left;
+        margin: 0;
+        border-radius: 0;
+    }
+
+    div.DTE div.DTE_Form_Buttons button:first-child {
+        border-top-left-radius: 3px;
+        border-bottom-left-radius: 3px;
+    }
+
+    div.DTE div.DTE_Form_Buttons button:last-child {
+        border-top-right-radius: 3px;
+        border-bottom-right-radius: 3px;
+    }
+
+#table_previous a {
+  background-color:black;
+}
+
+#table_next a {
+  background-color:red;
+  float: left;
+}
+
+
+
+</style>
+
+<script src="{% static '3rd_party/js/jquery-3.3.1.min.js' %}"></script>
+<script type="text/javascript" src="{% static "datatables/datatables.min.js" %}"></script>
+<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/pipeline.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "css/datatables.min.css" %}"/>
+
+
+
+<div class="container">
+  <div class="left rcorners">
+    <a>PIPELINE</a>
+    <p>Select pipeline to use</p>
+     <form id="pipelines" action="" method="post">
+        {% csrf_token %}
+
+        {{ form.pipelines }}
+    </form>
+  </div>
+  <div class="left rcorners">
+    <a>INPUT DATA</a>
+    <p>Select data to process</p>
+         <form id="files" action="" method="post">
+        {% csrf_token %}
+
+        {{ form.input }}
+    </form>
+  </div>
+    <button id="submit_btn">RUN</button>
+</div>
+<hr>
+
+<div id="main_content">
+    <div id="wait"><h3>Please select a valid pipeline and input data</h3></div>
+            <div class="table">
+            <table class="styled-table" id="table" width="100%">
+                <thead>
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+</div>
+
+{% endblock %}

@@ -31,7 +31,7 @@ def read_from_dir(dir, sentiment=None):
             else:
                 data.append(text)
             cnt += 1
-            if cnt > 40:
+            if cnt > 1000:
                 break
     df = pd.DataFrame(data, columns=['text', 'sentiment'])
     return df

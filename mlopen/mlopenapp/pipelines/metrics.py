@@ -2,7 +2,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 import seaborn as sn
 import matplotlib.pyplot as plt
-import text_preprocessing as tpp
+from . import text_preprocessing as tpp
 
 
 def plot_confusion(cm):

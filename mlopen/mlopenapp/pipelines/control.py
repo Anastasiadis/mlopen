@@ -1,11 +1,9 @@
 import os
-import csv
-import pandas as pd
-from input import text_files_input as tfi
-import vectorization as vct,\
+from mlopenapp.pipelines import vectorization as vct,\
     text_preprocessing as tpp, \
     logistic_regression as lr, \
     metrics as mtr
+from mlopenapp.utils import io_handler as io
 
 # These will be replaced by user input
 train_paths = [
@@ -27,7 +25,7 @@ test_paths = [
 test_sentiments = [1, 0]
 
 
-def make_model(df_train,  df_test, *args):
+def train(df_train,  df_test, *args):
     """
     Creates a model based on a train and a test dataframes, and calculates model metrics
     """
@@ -46,28 +44,38 @@ def make_model(df_train,  df_test, *args):
         test_corpus = df_test[arg].tolist()
         test_sentiment = df_test['sentiment'].tolist()
         mtr.get_model_metrics(tfidf[arg], s_a_model, test_corpus, test_sentiment, True)
-        return tfidf[arg], vector[arg], s_a_model
+        models = [(s_a_model, "logreg_model")]
+        args = [(tfidf[arg], "tfidf_vect")]
+        io.save_pipeline(models, args, "LogisticRegressionWithfTfIdf")
+        #io.save(s_a_model, "logreg_model", True, "model")
+        #io.save(tfidf[arg], "tfidf_vect", True, "arg")
+        return tfidf[arg], s_a_model
 
 
 def make_prediction(input, tfidf, model, processed=False):
     """
     Predicts the sentiment of a list of text statements
     """
+    preds = []
     for statement in input:
-        predict_text(statement, tfidf, model, processed)
+        temp = predict_text(statement, tfidf, model, processed)
+        preds.append([str(temp[0]), str(temp[1])])
+    return preds
 
 
 def predict_text(text, tfidf, model, processed=False):
     """
     Predicts the sentiment of a single text statement
     """
+    original = text
     if not processed:
         text = tpp.process_text(text)
     transformed_text = tfidf.transform([text])
     prediction = model.predict(transformed_text)
-    return prediction
+    return (original, prediction[0])
 
-df_train = tpp.process_text_df(tfi.prepare_data(train_paths, train_sentiments), 'text')
-df_test = tpp.process_text_df(tfi.prepare_data(test_paths, test_sentiments), 'text')
-model_tup = make_model(df_train, df_test, 'text')
+
+#df_train = tpp.process_text_df(tfi.prepare_data(train_paths, train_sentiments), 'text')
+#df_test = tpp.process_text_df(tfi.prepare_data(test_paths, test_sentiments), 'text')
+#model_tup = train(df_train, df_test, 'text')
 

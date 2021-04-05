@@ -162,6 +162,8 @@ def process_text_df(df, *args):
         for i, text in df[arg].items():
             tokens = process_text(text)
             df[arg].at[i] = tokens
+            print(tokens)
+    print(df)
     return df
 
 

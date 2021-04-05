@@ -15,7 +15,19 @@ body {
   z-index: 1;
   top: 0;
   left: 0;
-  background-color: #339944;
+  background-color: #031511;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+.sidenav2 {
+  height: 100%;
+  width: 8px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 200px;
+  background-color: #dd6622;
   overflow-x: hidden;
   padding-top: 20px;
 }
@@ -23,47 +35,50 @@ body {
 .sidenav a {
   padding: 6px 8px 6px 16px;
   text-decoration: none;
-  font-size: 25px;
+  font-size: 18 px;
   color: #f1f1f1;
   display: block;
 }
 
 .sidenav a:hover {
-  color: #ffffaa;
+  color: #dd6622;
 }
 
 .main {
-  margin-left: 200px; /* Same as the width of the sidenav */
-  font-size: 28px; /* Increased text to enable scrolling */
+  margin-left: 208px;
+  font-size: 12px;
   padding: 0px 10px;
 }
 
 .icon {
     background: url('your-image-url.jpg');
-    height: 20px;
-    width: 20px;
+    height: 16px;
+    width: 16px;
     display: block;
     /* Other styles here */
 }
 
 [class^="icon"] {
-  height: 50px;
-  width: 50px;
+  height: 42px;
+  width: 42 px;
   position: relative;
   top: 15px;
   fill: #fff;
 }
 
 [class^="img"] {
-  height: 200px;
-  width: 200px;
+  height: 120px;
+  width: 120px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
   position: relative;
   fill: #fff;
 }
 
 hr {
-  background-color: #ffffff;
-  color: #44aa55;
+  background-color: #031511;
+  color: #031511;
 }
 
 @media screen and (max-height: 450px) {
@@ -76,16 +91,22 @@ hr {
 
 <div class="sidenav">
     <img class="img_start" src="{% static '/images/mlicon.png' %}" alt="""/>
-  <hr/>
-  <a href="#start"><img class="icon_start" src="{% static '/images/mlicon.png' %}" alt="""/>Start Page</a>
-  <a href="#services"><img class="icon_data" src="{% static '/images/dataicon.png' %}" alt="""/>Data</a>
-  <a href="#clients"><img class="icon_pipeline" src="{% static '/images/pipeicon.png' %}" alt="""/>Pipeliness</a>
+  <a href="#models"><img class="icon_start" src="{% static '/images/mlicon.png' %}" alt="""/>Models</a>
+  <a href="{% url 'mlopenapp:data' %}"><img class="icon_data" src="{% static '/images/dataicon.png' %}" alt="""/>Data</a>
+  <a href="{% url 'mlopenapp:pipelines' %}"><img class="icon_pipeline" src="{% static '/images/pipeicon.png' %}" alt="""/>Pipeliness</a>
 </div>
+<div class="sidenav2">
+
+</div>
+
+{% block main %}
 
 <div class="main">
   <h2>This Page is Under Construction</h2>
   <p>Please browse the "pipelines" folder of the app to see backend progress.</p>
 </div>
+
+{% endblock %}
 
 </body>
 </html>

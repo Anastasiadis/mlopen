@@ -10,4 +10,14 @@ urlpatterns = [
         views.IndexView.as_view(),
         name="base"
     ),
+    url(
+            r'^data/$',
+            views.DataView.as_view(),
+            name="data"
+        ),
+    url(
+            r'^pipelines/$',
+            views.PipelineView.as_view(),
+            name="pipelines"
+        ),
 ]

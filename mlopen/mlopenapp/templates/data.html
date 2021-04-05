@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block main %}
+
+<style>
+body {
+  font-family: "Lato", sans-serif;
+}
+
+.sidenav {
+  height: 100%;
+  width: 200px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #031511;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+.sidenav2 {
+  height: 100%;
+  width: 8px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 200px;
+  background-color: #559966;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+.sidenav a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 18 px;
+  color: #f1f1f1;
+  display: block;
+}
+
+.sidenav a:hover {
+  color: #dd6622;
+}
+
+.main {
+  margin-left: 208px;
+  font-size: 12px;
+  padding: 0px 10px;
+}
+
+.icon {
+    background: url('your-image-url.jpg');
+    height: 16px;
+    width: 16px;
+    display: block;
+    /* Other styles here */
+}
+
+[class^="icon"] {
+  height: 42px;
+  width: 42 px;
+  position: relative;
+  top: 15px;
+  fill: #fff;
+}
+
+[class^="img"] {
+  height: 120px;
+  width: 120px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  fill: #fff;
+}
+
+hr {
+  background-color: #dddddd;
+  color: #dddddd;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+
+.container {margin-left: 208px; text-align: center;}
+.left {
+  display: inline-block;
+  *display: inline;
+  zoom: 1;
+  width: 25%;
+  padding: 0px;
+  background: #dddddd;
+}
+
+.left p {
+  height: 40px;
+  color: #031511;
+  font-size: 18px;
+  text-align: center;
+  background: #eeeeee;
+  width: 100%;
+  }
+
+.left a {
+  height: 40px;
+  color: #031511;
+  background: #dddddd;
+  font-size: 24px;
+  text-align: center;
+  width: 100%;
+  }
+
+.left button {
+  float: right;
+  background-color:#559966;
+  color:#ffffff;
+  font-size:30px;
+}
+
+.rcorners {
+  border-radius: 5px;
+  border: 2px solid #cccccc;
+
+}
+
+
+</style>
+
+<div class="container">
+  <div class="left rcorners">
+    <a>CSV</a>
+    <p>Load data from a .csv file</p>
+    <button>GO</button>
+  </div>
+  <div class="left rcorners">
+    <a>TEXT</a>
+    <p>Load data from a .txt file</p>
+    <button>GO</button>
+  </div>
+  <div class="left rcorners">
+    <a>LIST</a>
+    <p>List loaded files</p>
+    <button>GO</button>
+  </div>
+</div>
+<hr>
+
+{% endblock %}
