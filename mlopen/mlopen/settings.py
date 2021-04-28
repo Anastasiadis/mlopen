@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'bootstrap4',
     'mlopenapp.apps.MlopenappConfig'
 ]
 
@@ -128,6 +129,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'mlopenapp/staticfiles')
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'mlopenapp/static'),)
+
+MEDIA_URL = '/user_data/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'mlopenapp/data/user_data')
 
 
 # App Constants

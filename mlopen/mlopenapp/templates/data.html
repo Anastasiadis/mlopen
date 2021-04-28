@@ -131,21 +131,11 @@ hr {
 </style>
 
 <div class="container">
-  <div class="left rcorners">
-    <a>CSV</a>
-    <p>Load data from a .csv file</p>
-    <button>GO</button>
-  </div>
-  <div class="left rcorners">
-    <a>TEXT</a>
-    <p>Load data from a .txt file</p>
-    <button>GO</button>
-  </div>
-  <div class="left rcorners">
-    <a>LIST</a>
-    <p>List loaded files</p>
-    <button>GO</button>
-  </div>
+<form method="POST" class="post-form" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="save btn btn-default">Save</button>
+</form>
 </div>
 <hr>
 

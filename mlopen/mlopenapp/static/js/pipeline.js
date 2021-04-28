@@ -1,6 +1,7 @@
 var ret;
 var table;
 var newTable;
+var selectedTab = "Graphs";
 
 function getCookieVal(name) {
     var cookie = decodeURIComponent(document.cookie);
@@ -25,13 +26,11 @@ const csrftoken = getCookieVal('csrftoken');
 function generateTable() {
     newTable = false;
     var arr = [];
-    //$('#main_content').html(ret.columns.length);
     for (i = 0; i < ret.columns.length; i++) {
         var temp = {title: JSON.stringify(ret.columns[i])};
         arr.push(temp);
     }
 
-    $('#wait').hide();
 
     $('#table tbody tr').remove();
     table.destroy();
@@ -43,29 +42,56 @@ function generateTable() {
             {title: "Sentiment"}
         ]
     } );
-    //$('#main_content').html(arr[0].title);
 }
 
 
-function paint(tab){
+function repaint(){
+            if (selectedTab == "Graphs"){
+                $('#table_wrapper').hide();
+                $('#graphs').show();
+            }
+            else {
+                $('#graphs').hide();
+                $('#table_wrapper').show();
+            }
+}
+
+
+function paint(){
+            repaint();
+            $('#wait').hide();
+            $('#warpper').show();
+            //$('#tab-bottom-hr').show();
+
+            var container = document.getElementById('graphs');
+            Plotly.newPlot(container, ret.graphs.data, ret.graphs.layout);
+            $('#graphs').hide().show(0);
+
             table = $('#table').DataTable();
             table.clear();
             table.draw();
             generateTable();
-    }
+
+}
 
 
 $(document).ready(function(){
-    $('#table').hide();
+    $('#table_wrapper').hide();
+    $('#graphs').hide();
+    $('#warpper').hide();
+    $('#pipeline_results').hide();
+    $('#loader').hide();
+    $('#pipeline_select').show();
+    //$('#tab-bottom-hr').hide();
     $('#wait').show();
 
     $('#submit_btn').click(function(event) {
-        event.preventDefault(); id="wait"
+        event.preventDefault();
+        $('#loader').show();
 
         var params = {"pipelines": document.getElementById("pipelines").elements[1].value,
             "input": document.getElementById("files").elements[1].value
         };
-        //$('#main_content').html(jQuery.param(params));
 
         $.ajax({
             type: 'POST',
@@ -77,29 +103,25 @@ $(document).ready(function(){
             },
             data: jQuery.param(params),//$(this).serialize(),
             success: function(data){
+                $('#loader').hide();
                 if (data !== undefined && data !== null){
                     if (!Object.prototype.hasOwnProperty.call(data, 'empty')) {
-                        $('#table').show();
+                        $('#pipeline_results').show();
+                        $('#pipeline_select').hide();
                         ret = data;
                         paint();
-                        /*
-                        $('#testreport_table').DataTable({
-                            'pageLength': 25,
-                            'order': []
-                        });
-                        */
                     }
                     else {
-                        $('#main_content').html('Weeeeeeeeeeeeeeeeeeeeeeell No updates returned for this specific query. Try a different query.');
+                        $('#main_content').html('No updates returned for this specific query. Try a different query.');
                     }
                 }
                 else{
-                    $('#main_content').html('Weeeeeeeeeeeeeeeeeeeeeeeeeeeell Invalid Data Returned by Backend');
+                    $('#main_content').html('Invalid Data Returned by Backend');
                 }
             },
             error: function(request){
                 var response = JSON.parse(request.responseText);
-                $('#spinner_container').hide();
+                $('#loader').hide();
                 console.log(response.messages);
                 for (var key in response.messages) {
                     if(!Object.prototype.hasOwnProperty.call(response.messages, key)){
@@ -111,6 +133,18 @@ $(document).ready(function(){
 
             }
         });
+    });
+/**
+     $('.tab').click(function(e){
+        selectedTab = $("input[type='radio'][name='group']:checked").val();
+        $('#test').html($("input[type='radio'][name='group']:checked").val());
+        paint();
+    });
+**/
+    $('input[type=radio][name="group"]').change(function() {
+        selectedTab = $(this).val();
+        //$('#test').html($(this).val());
+        repaint();
     });
 
     setTimeout(function(){

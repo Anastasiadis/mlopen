@@ -15,9 +15,6 @@ FILE_DIRS = {
 class MLModel(models.Model):
     """
     Model for machine learning models
-
-    References are e.g. Bugzilla bugs or CVE security advisories. IBS calls this
-    issues.
     """
     name = models.CharField(max_length=200, db_index=True)
     created_at = models.DateTimeField(null=True)
@@ -44,6 +41,7 @@ class MLPipeline(models.Model):
     returns the results.
     """
     name = models.CharField(max_length=200, db_index=True)
+    control = models.CharField(max_length=200, null=False, default="control")
     created_at = models.DateTimeField(null=True)
     updated_at = models.DateTimeField(null=True)
     ml_models = models.ManyToManyField(MLModel)
@@ -55,5 +53,5 @@ class MLPipeline(models.Model):
     def get_args(self):
         return self.ml_args.all()
 
-
-
+    def __str__(self):
+        return self.control

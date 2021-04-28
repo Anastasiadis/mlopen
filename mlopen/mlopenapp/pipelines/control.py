@@ -4,6 +4,7 @@ from mlopenapp.pipelines import vectorization as vct,\
     logistic_regression as lr, \
     metrics as mtr
 from mlopenapp.utils import io_handler as io
+from mlopenapp.utils import plotter
 
 # These will be replaced by user input
 train_paths = [
@@ -46,20 +47,24 @@ def train(df_train,  df_test, *args):
         mtr.get_model_metrics(tfidf[arg], s_a_model, test_corpus, test_sentiment, True)
         models = [(s_a_model, "logreg_model")]
         args = [(tfidf[arg], "tfidf_vect")]
-        io.save_pipeline(models, args, "LogisticRegressionWithfTfIdf")
-        #io.save(s_a_model, "logreg_model", True, "model")
-        #io.save(tfidf[arg], "tfidf_vect", True, "arg")
+        io.save_pipeline(models, args, os.path.basename(__file__))
         return tfidf[arg], s_a_model
 
 
-def make_prediction(input, tfidf, model, processed=False):
+def run_pipeline(input, tfidf, model, processed=False):
     """
     Predicts the sentiment of a list of text statements
     """
-    preds = []
+    preds = {'data': [], 'columns': [], 'graphs': None}
+    pos = 0
     for statement in input:
         temp = predict_text(statement, tfidf, model, processed)
-        preds.append([str(temp[0]), str(temp[1])])
+        preds['data'].append([str(temp[0]), str(temp[1])])
+        if temp[1] == 1:
+            pos += 1
+    print("AND NOW FOR THE GRAPHS")
+    preds['graphs'] = plotter.plotlify_pie({'Positive': pos, 'Negative': len(preds['data']) - pos}, "Number of Positive and Negative Reviews")
+    print(preds['graphs'])
     return preds
 
 

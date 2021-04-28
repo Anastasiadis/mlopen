@@ -1,19 +1,23 @@
 from django import forms
 from .utils import io_handler as io
+from . import models
 
 
 class UploadFileForm(forms.Form):
-    title = forms.CharField(max_length=50)
+    name = forms.CharField(max_length=50)
     file = forms.FileField()
 
 
 class PipelineSelectForm(forms.Form):
-    pipelines = forms.ChoiceField()
-    input = forms.ChoiceField()
+    pipelines = forms.ModelChoiceField(queryset=models.MLPipeline.objects.all())
+    input = forms.ModelChoiceField(queryset=models.InputFile.objects.all())
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        pipeline_list = [(o, o) for i, o in enumerate(io.get_pipeline_list())]
-        self.fields['pipelines'] = forms.ChoiceField(
-            choices=pipeline_list
-        )
+
+class UploadForm(forms.ModelForm):
+    class Meta:
+        model = models.InputFile
+        fields = [
+        'name',
+        'created_at',
+        'file'
+        ]

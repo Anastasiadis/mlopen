@@ -18,78 +18,19 @@ from torch.utils.data import Dataset, DataLoader
 import torch.nn.functional as F
 import string
 from sklearn.metrics import mean_squared_error
+from mlopenapp.utils import io_handler as io
+from mlopenapp.utils import plotter
 
 
 import torch
 
-from NeuralNetworkFeedForward.ff_model import FeedforwardNeuralNetModel, Feedforward, LSTM_variable_input
+from mlopenapp.pipelines.NeuralNetworkFeedForward.ff_model import FeedforwardNeuralNetModel, Feedforward, LSTM_variable_input
 
-from input import text_files_input as tfi
-import text_preprocessing as tpp, vectorization as vct
+from mlopenapp.pipelines.input import text_files_input as tfi
+from mlopenapp.pipelines import text_preprocessing as tpp, vectorization as vct
 
 
 ff_nn_bow_model = None
-
-
-class ReviewsDataset(Dataset):
-    def __init__(self, X, Y):
-        self.X = X
-        self.y = Y
-
-    def __len__(self):
-        return len(self.y)
-
-    def __getitem__(self, idx):
-        return torch.from_numpy(self.X[idx][0].astype(np.int32)), self.y[idx], \
-               self.X[idx][1]
-
-
-def train_model(train_dl, val_dl, model, epochs=10, lr=0.001):
-    parameters = filter(lambda p: p.requires_grad, model.parameters())
-    optimizer = torch.optim.Adam(parameters, lr=lr)
-    for i in range(epochs):
-        print("Epoch " + str(i))
-        model.train()
-        sum_loss = 0.0
-        total = 0
-        for x, y, l in train_dl:
-            print("TRAIN DL HAS")
-            print(y)
-            print(x)
-            print(l)
-            x = x.long()
-            y = y.long()
-            y_pred = model(x, l)
-            print("TRAIN PRED IS")
-            print(y_pred)
-            optimizer.zero_grad()
-            loss = F.cross_entropy(y_pred, y)
-            loss.backward()
-            optimizer.step()
-            sum_loss += loss.item()*y.shape[0]
-            total += y.shape[0]
-        val_loss, val_acc, val_rmse = validation_metrics(model, val_dl)
-        if i % 5 == 1:
-            print("train loss %.3f, val loss %.3f, val accuracy %.3f, and val rmse %.3f" % (sum_loss/total, val_loss, val_acc, val_rmse))
-
-
-def validation_metrics (model, valid_dl):
-    model.eval()
-    correct = 0
-    total = 0
-    sum_loss = 0.0
-    sum_rmse = 0.0
-    for x, y, l in valid_dl:
-        x = x.long()
-        y = y.long()
-        y_hat = model(x, l)
-        loss = F.cross_entropy(y_hat, y)
-        pred = torch.max(y_hat, 1)[1]
-        correct += (pred == y).float().sum()
-        total += y.shape[0]
-        sum_loss += loss.item()*y.shape[0]
-        sum_rmse += np.sqrt(mean_squared_error(pred, y.unsqueeze(-1)))*y.shape[0]
-    return sum_loss/total, correct/total, sum_rmse/total
 
 
 # These will be replaced by user input
@@ -138,7 +79,6 @@ def word_2_vec(corpus):
           w2v_model.wv.most_similar('evil'))
     # w2v_model.save('embeddings.txt')
     return w2v_model
-
 
 
 def get_doc2vec_model(corpus):
@@ -295,6 +235,70 @@ def make_target(label, device):
         return torch.tensor([2], dtype=torch.long, device=device)
 
 
+# LTSM FEEDFORWARD FUNCTIONS AHEAD
+
+
+class ReviewsDataset(Dataset):
+    def __init__(self, X, Y):
+        self.X = X
+        self.y = Y
+
+    def __len__(self):
+        return len(self.y)
+
+    def __getitem__(self, idx):
+        return torch.from_numpy(self.X[idx][0].astype(np.int32)), self.y[idx], \
+               self.X[idx][1]
+
+
+def train_model(train_dl, val_dl, model, epochs=10, lr=0.001):
+    parameters = filter(lambda p: p.requires_grad, model.parameters())
+    optimizer = torch.optim.Adam(parameters, lr=lr)
+    for i in range(epochs):
+        print("Epoch " + str(i))
+        model.train()
+        sum_loss = 0.0
+        total = 0
+        for x, y, l in train_dl:
+            print("TRAIN DL HAS")
+            print(y)
+            print(x)
+            print(l)
+            x = x.long()
+            y = y.long()
+            y_pred = model(x, l)
+            print("TRAIN PRED IS")
+            print(y_pred)
+            optimizer.zero_grad()
+            loss = F.cross_entropy(y_pred, y)
+            loss.backward()
+            optimizer.step()
+            sum_loss += loss.item()*y.shape[0]
+            total += y.shape[0]
+        val_loss, val_acc, val_rmse = validation_metrics(model, val_dl)
+        if i % 5 == 1:
+            print("train loss %.3f, val loss %.3f, val accuracy %.3f, and val rmse %.3f" % (sum_loss/total, val_loss, val_acc, val_rmse))
+
+
+def validation_metrics (model, valid_dl):
+    model.eval()
+    correct = 0
+    total = 0
+    sum_loss = 0.0
+    sum_rmse = 0.0
+    for x, y, l in valid_dl:
+        x = x.long()
+        y = y.long()
+        y_hat = model(x, l)
+        loss = F.cross_entropy(y_hat, y)
+        pred = torch.max(y_hat, 1)[1]
+        correct += (pred == y).float().sum()
+        total += y.shape[0]
+        sum_loss += loss.item()*y.shape[0]
+        sum_rmse += np.sqrt(mean_squared_error(pred, y.unsqueeze(-1)))*y.shape[0]
+    return sum_loss/total, correct/total, sum_rmse/total
+
+
 # Function to return the dictionary either with padding word or without padding
 def make_dict(corpus, padding=True):
     if padding:
@@ -327,11 +331,11 @@ def get_vocab(df, arg):
         #print("row text is")
         #print(row[arg])
         counts.update(row[arg])
-    print("num_words before:", len(counts.keys()))
+    #print("num_words before:", len(counts.keys()))
     for word in list(counts):
         if counts[word] < 2:
             del counts[word]
-    print("num_words after:", len(counts.keys()))
+    #print("num_words after:", len(counts.keys()))
 
     # creating vocabulary
     vocab2index = {"": 0, "UNK": 1}
@@ -342,19 +346,27 @@ def get_vocab(df, arg):
 
     df['encoded'] = df[arg].apply(
         lambda x: np.array(encode_sentence(x, vocab2index)))
-    print(df.head())
-    print(vocab2index)
+    #print(df.head())
+    #print(vocab2index)
     return df, words, vocab2index
 
 
-def prepare_datasets(df, arg, train=True):
-    df, words, vocab = get_vocab(df, arg)
-    print(Counter(df['sentiment']))
+def prepare_datasets(df_c, arg, train=True, words=None, vocab=None):
+    if words is None or vocab is None:
+        df, words, vocab = get_vocab(df_c, arg)
+    else:
+        df = df_c.copy()
+        df[arg] = df[arg].apply(lambda x: tpp.process_text(x))
+        df[arg + '_length'] = df[arg].apply(lambda x: len(x))
+        df['encoded'] = df[arg].apply(
+            lambda x: np.array(encode_sentence(x, vocab)))
+
+    # print(Counter(df['sentiment']))
     batch_size = 5000
     vocab_size = len(words)
 
     X = list(df['encoded'])
-    y = list(df['sentiment'])
+    y = list(df['sentiment']) if train else df['order']
 
     if train:
         from sklearn.model_selection import train_test_split
@@ -363,47 +375,91 @@ def prepare_datasets(df, arg, train=True):
         valid_ds = ReviewsDataset(X_valid, y_valid)
         train_dl = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
         test_dl = DataLoader(valid_ds, batch_size=batch_size)
-        return train_ds, train_dl, valid_ds, test_dl, words, vocab_size
+        return train_ds, train_dl, valid_ds, test_dl, words, vocab, vocab_size
     else:
         X_train = X
         y_train = y
         train_ds = ReviewsDataset(X_train, y_train)
+        #print("REVIEWS DATASET IS")
+        #print(train_ds)
+        #print("DATALOADER IS")
         train_dl = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
+        #print(train_dl)
         return train_dl
 
 
 def train_lstm_model(df, arg):
-    train_ds, train_dl, valid_ds, test_dl, words, vocab_size = prepare_datasets(df, arg, True)
+    train_ds, train_dl, valid_ds, test_dl, words, vocab, vocab_size = prepare_datasets(df, arg, True)
     model = LSTM_variable_input(vocab_size, 50, 50)
     batch_size = 5000
     vocab_size = len(words)
     train_dl = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
     val_dl = DataLoader(valid_ds, batch_size=batch_size)
-    train_model(train_dl, val_dl, model, epochs=30, lr=0.1)
-    return(model)
+    train_model(train_dl, val_dl, model, epochs=80, lr=0.1)
+    return model, vocab, words, batch_size
 
 
-#def torch_vectors(df, vocab):
-    #for index, row in df.iterrows():
-        #for word
+def train(df_train, arg):
+    df_train = tfi.prepare_data(train_paths, train_sentiments)
+    l_model, vocab, words, batch_size = train_lstm_model(df_train, 'text')
+    models = [(l_model, "lstm_model")]
+    args = [(vocab, "lstm_vocab"), (words, "lstm_words")]
+    io.save_pipeline(models, args, os.path.basename(__file__))
+    return l_model, vocab, words, batch_size
+
+
+def run_pipeline(df, arg, model, args):
+    preds = {'data': [], 'columns': [], 'graphs': None}
+    print(df)
+    print(arg)
+    print(df[arg])
+    df['order'] = [i for i in range(0, len(df[arg]))]
+    print(df)
+    dl = prepare_datasets(df, arg, False, args['lstm_words'], args['lstm_vocab'])
+    for x, y, l in dl:
+        print(x)
+        print(y)
+        print(l)
+        print("Prediction is")
+        y_hat = model(x, l)
+        pred = torch.max(y_hat, 1)[1].numpy()
+        print(pred)
+        pos = 0
+        for p, i in zip(pred, y):
+            print("Prediction is")
+            preds['data'].append([df[arg].iat[int(i)], str(p)])
+            if p == 1:
+                pos += 1
+            print(p)
+        preds['graphs'] = plotter.plotlify_pie(
+            {'Positive': pos, 'Negative': len(preds['data']) - pos},
+            "Number of Positive and Negative Reviews")
+        print(preds['graphs'])
+        return preds
+
 
 
 # lstm model implementation
-
+"""
 df_train = tfi.prepare_data(train_paths, train_sentiments)
-l_model = train_lstm_model(df_train, 'text')
-example = [["This movie was one very pleasant surprise. The bad guy was incredible. Must see!", 1]]
+l_model, vocab, words, batch_size = train(df_train, 'text')
+example = [["This movie was one very pleasant surprise. The awesome was incredible. Must see!", 0],
+            ["Worst thing I've ever seen in my life, avoid at all costs!", 1],
+            ["I liked it, I don't care what everybody says, it was one of my favorites.", 2],
+            ["Please, don't watch this! It's a total waste of time!", 3],
+            ["I thought I would not like this, but it turned out to be pretty good!", 4],
+            ["Who would have thought that such an expensive play would be so low quality", 5],
+            ["I would wait bad worst to rent this. It does not justify a full price ticket", 6],
+            ["Started awful, but it became too slow and unimaginative in the end", 7],
+            ["A very bad movie, awful visuals, horrible sound - I hated it.", 8],
+            ["I was sceptical at first, but this movie won me over - a great documentary!", 9]
+           ]
 df_ex = pandas.DataFrame(example, columns=['text', 'sentiment'])
-dl = prepare_datasets(df_ex, 'text', False)
-for x, y, l in dl:
-    print(x)
-    print(y)
-    print(l)
-    pred = l_model(x, l)
-    print("Prediction is")
-    print(pred)
+print("EXAMPLE DF IS")
+print(df_ex)
+run_pipeline(df_ex, 'text', l_model, {'lstm_words': words, 'lstm_vocab': vocab})
 
-
+"""
 
 
 # word2vec model

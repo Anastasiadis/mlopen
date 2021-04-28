@@ -53,6 +53,7 @@ def save_pipeline(models, args, name):
          pip_args.append(temp)
     pipeline = constants.FILE_TYPES['pipeline'](
         name=name,
+        control=name,
         created_at=datetime.datetime.now(),
         updated_at=datetime.datetime.now())
     pipeline.save()
