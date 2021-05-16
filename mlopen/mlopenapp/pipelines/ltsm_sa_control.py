@@ -408,8 +408,10 @@ def train(df_train, arg):
     return l_model, vocab, words, batch_size
 
 
-def run_pipeline(df, arg, model, args):
+def run_pipeline(input, model, args):
+    df = pandas.DataFrame(input, columns=['text'])
     preds = {'data': [], 'columns': [], 'graphs': None}
+    arg = 'text'
     print(df)
     print(arg)
     print(df[arg])
@@ -431,6 +433,7 @@ def run_pipeline(df, arg, model, args):
             if p == 1:
                 pos += 1
             print(p)
+        preds['columns'] = ['Statement', 'Sentiment']
         preds['graphs'] = plotter.plotlify_pie(
             {'Positive': pos, 'Negative': len(preds['data']) - pos},
             "Number of Positive and Negative Reviews")

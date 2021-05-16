@@ -67,60 +67,33 @@ class PipelineView(TemplateView, FormView):
                 "If you have one movie to watch, then watch this! You'll be left in awe!",
                 "Started good, but it became too slow and unimaginative in the end.",
             ]
-        df_inpt = pandas.DataFrame(inpt, columns=['text'])
 
         pipeline = clean_data['pipelines']
         print("NAME IS")
         print(pipeline.control)
-        if (pipeline.control == "ltsm_sa_control.py"):
-            spec = importlib.util.spec_from_file_location('ltsm_sa_control',
-                                                          os.path.join(constants.CONTROL_DIR,
-                                                                       str(
-                                                                           'ltsm_sa_control.py')))
-            control = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(control)
-
+        model = None
+        args = {}
+        if pipeline.control == "ltsm_sa_control":
             model = io.load("lstm_model.pkl", 'model')
-            args = {}
             args['lstm_vocab'] = io.load("lstm_vocab.pkl", 'arg')
             args['lstm_words'] = io.load("lstm_words.pkl", 'arg')
-
-            preds = control.run_pipeline(df_inpt, 'text', model, args)
-
-        else:
-            print(pipeline.control)
-            print(os.path.join(constants.CONTROL_DIR, 'control.py'))
-            spec = importlib.util.spec_from_file_location(pipeline.control,
-                                                          os.path.join(constants.CONTROL_DIR,
-                                                                       str(pipeline.control) + '.py'))
-            control = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(control)
-
-            # control.train(df_train, df_test, 'text')
-
-            # """
+        elif pipeline.control == "control":
             model = io.load("logreg_model.pkl", 'model')
-            tfidf = io.load("tfidf_vect.pkl", 'arg')
-            print(tfidf)
-            print(model)
-            print(type(tfidf))
-            print(type(model))
-            print("HAAAAAAAOOOOOOO")
-            preds = control.run_pipeline(
-                [
-                    "This was a very good movie indeed, I enjoyed it very much!",
-                    "A very bad movie, awful visuals, horrible sound - I hated it.",
-                    "I was sceptical at first, but this movie won me over - a great documentary!",
-                    "I would never watch this a second time, it was mediocre at best.",
-                    "Who would have thought that such an expensive play would be so low quality.",
-                    "Please, don't watch this! It's a total waste of time!",
-                    "I thought I would not like this, but it turned out to be pretty good!",
-                    "I would wait to rent this. It does not justify a full price ticket.",
-                    "If you have one movie to watch, then watch this! You'll be left in awe!",
-                    "Started good, but it became too slow and unimaginative in the end.",
-                ]
-                , tfidf, model)
-        ret = {'data': preds['data'], 'columns': ["Original Statement", "Predicted Sentiment"], 'graphs': preds['graphs']}
+            args['tfidf'] = io.load("tfidf_vect.pkl", 'arg')
+
+        spec = importlib.util.spec_from_file_location(pipeline.control,
+                                                      os.path.join(constants.CONTROL_DIR,
+                                                                   str(pipeline.control) + '.py'))
+        control = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(control)
+
+        # control.train(df_train, df_test, 'text')
+
+        # """
+
+
+        preds = control.run_pipeline(inpt, model, args)
+        ret = {'data': preds['data'], 'columns': preds['columns'], 'graphs': preds['graphs']}
         print(ret)
 
         # """

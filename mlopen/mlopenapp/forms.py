@@ -1,10 +1,15 @@
 from django import forms
 from .utils import io_handler as io
 from . import models
+from . import constants
 
 
 class UploadFileForm(forms.Form):
     name = forms.CharField(max_length=50)
+    file = forms.FileField()
+
+
+class ImportPipelineForm(forms.Form):
     file = forms.FileField()
 
 

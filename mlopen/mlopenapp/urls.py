@@ -11,6 +11,11 @@ urlpatterns = [
         name="base"
     ),
     url(
+        r'^import/$',
+        views.ImportView.as_view(),
+        name="import"
+    ),
+    url(
             r'^data/$',
             views.DataView.as_view(),
             name="data"

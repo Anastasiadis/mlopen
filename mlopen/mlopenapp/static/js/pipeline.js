@@ -1,6 +1,4 @@
 var ret;
-var table;
-var newTable;
 var selectedTab = "Graphs";
 
 function getCookieVal(name) {
@@ -24,23 +22,15 @@ function getCookieVal(name) {
 const csrftoken = getCookieVal('csrftoken');
 
 function generateTable() {
-    newTable = false;
-    var arr = [];
-    for (i = 0; i < ret.columns.length; i++) {
-        var temp = {title: JSON.stringify(ret.columns[i])};
-        arr.push(temp);
+    var cols = [];
+    for (const col in ret.columns) {
+        cols.push({title: ret.columns[col]});
     }
 
-
-    $('#table tbody tr').remove();
-    table.destroy();
     $('#table').DataTable( {
         pagingType: "full_numbers",
         data: ret.data,
-        columns: [
-            {title: "Original"},
-            {title: "Sentiment"}
-        ]
+        columns: cols
     } );
 }
 
@@ -61,15 +51,11 @@ function paint(){
             repaint();
             $('#wait').hide();
             $('#warpper').show();
-            //$('#tab-bottom-hr').show();
-
-            var container = document.getElementById('graphs');
-            Plotly.newPlot(container, ret.graphs.data, ret.graphs.layout);
-            $('#graphs').hide().show(0);
-
-            table = $('#table').DataTable();
-            table.clear();
-            table.draw();
+            if (ret.graphs !== undefined && ret.graphs !== null) {
+                var container = document.getElementById('graphs');
+                Plotly.newPlot(container, ret.graphs.data, ret.graphs.layout);
+                $('#graphs').hide().show(0);
+            }
             generateTable();
 
 }
@@ -82,7 +68,6 @@ $(document).ready(function(){
     $('#pipeline_results').hide();
     $('#loader').hide();
     $('#pipeline_select').show();
-    //$('#tab-bottom-hr').hide();
     $('#wait').show();
 
     $('#submit_btn').click(function(event) {
@@ -134,13 +119,7 @@ $(document).ready(function(){
             }
         });
     });
-/**
-     $('.tab').click(function(e){
-        selectedTab = $("input[type='radio'][name='group']:checked").val();
-        $('#test').html($("input[type='radio'][name='group']:checked").val());
-        paint();
-    });
-**/
+    
     $('input[type=radio][name="group"]').change(function() {
         selectedTab = $(this).val();
         //$('#test').html($(this).val());

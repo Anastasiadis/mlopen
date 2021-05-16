@@ -70,3 +70,9 @@ def get_pipeline_list():
         if filename.endswith("control.py"):
             pipeline_list.append(filename[:-3])
     return pipeline_list
+
+
+def save_pipeline_file(f):
+    with open(os.path.join(constants.CONTROL_DIR, f.name), 'wb+') as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)
