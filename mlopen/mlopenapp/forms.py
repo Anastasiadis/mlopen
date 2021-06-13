@@ -1,6 +1,6 @@
 from django import forms
 from .utils import io_handler as io
-from . import models
+from .models import MLPipeline, InputFile
 from . import constants
 
 
@@ -11,16 +11,19 @@ class UploadFileForm(forms.Form):
 
 class ImportPipelineForm(forms.Form):
     file = forms.FileField()
+    support_files = forms.FileField(
+        widget=forms.ClearableFileInput(attrs={'multiple': True}))
 
 
 class PipelineSelectForm(forms.Form):
-    pipelines = forms.ModelChoiceField(queryset=models.MLPipeline.objects.all())
-    input = forms.ModelChoiceField(queryset=models.InputFile.objects.all())
+    type = forms.CharField(required=False)
+    pipelines = forms.ModelChoiceField(queryset=MLPipeline.objects.all())
+    input = forms.ModelChoiceField(queryset=InputFile.objects.all(), required=False)
 
 
 class UploadForm(forms.ModelForm):
     class Meta:
-        model = models.InputFile
+        model = InputFile
         fields = [
         'name',
         'created_at',

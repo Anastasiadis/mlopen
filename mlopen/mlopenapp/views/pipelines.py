@@ -2,6 +2,7 @@ import os
 import importlib.util
 import pandas
 
+from django import forms
 from mlopenapp.forms import PipelineSelectForm
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
@@ -19,12 +20,18 @@ class PipelineView(TemplateView, FormView):
     form_class = PipelineSelectForm
     success_url = '/pipelines/'
     relative_url = "pipelines"
+    CHOICES = [(0, 'Run Pipeline'),
+               (1, 'Train Model')]
+
+    def get_form(self, form_class=PipelineSelectForm):
+        form = super().get_form(form_class)
+        form.fields["type"] = forms.ChoiceField(choices=self.CHOICES, initial=0, required=False)
+        return form
 
     def form_invalid(self, form):
-        print(form)
         if self.request.is_ajax():
+            print(form.errors)
             clean_data = form.cleaned_data.copy()
-            print("AT LEAST IT'S AJAX")
             if "pipelines" in clean_data:
                 return self.update(clean_data)
             else:
@@ -35,10 +42,8 @@ class PipelineView(TemplateView, FormView):
         return self.render_to_response(self.get_context_data(form=form))
 
     def form_valid(self, form):
-        print("INVALID")
         if self.request.is_ajax():
             clean_data = form.cleaned_data.copy()
-            print("AT LEAST IT'S AJAX")
             if "pipelines" in clean_data:
                 return self.update(clean_data)
             else:
@@ -67,35 +72,24 @@ class PipelineView(TemplateView, FormView):
                 "If you have one movie to watch, then watch this! You'll be left in awe!",
                 "Started good, but it became too slow and unimaginative in the end.",
             ]
-
         pipeline = clean_data['pipelines']
-        print("NAME IS")
-        print(pipeline.control)
-        model = None
-        args = {}
-        if pipeline.control == "ltsm_sa_control":
-            model = io.load("lstm_model.pkl", 'model')
-            args['lstm_vocab'] = io.load("lstm_vocab.pkl", 'arg')
-            args['lstm_words'] = io.load("lstm_words.pkl", 'arg')
-        elif pipeline.control == "control":
-            model = io.load("logreg_model.pkl", 'model')
-            args['tfidf'] = io.load("tfidf_vect.pkl", 'arg')
-
         spec = importlib.util.spec_from_file_location(pipeline.control,
                                                       os.path.join(constants.CONTROL_DIR,
                                                                    str(pipeline.control) + '.py'))
         control = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(control)
 
-        # control.train(df_train, df_test, 'text')
-
-        # """
-
-
-        preds = control.run_pipeline(inpt, model, args)
-        ret = {'data': preds['data'], 'columns': preds['columns'], 'graphs': preds['graphs']}
-        print(ret)
-
+        if clean_data["type"] == "0":
+            model = None
+            args = {}
+            pipeline_ret = io.load_pipeline(pipeline)
+            if pipeline_ret:
+                model = pipeline_ret[0]
+                args = pipeline_ret[1]
+            preds = control.run_pipeline(inpt, model, args)
+            ret = {'data': preds['data'], 'columns': preds['columns'], 'graphs': preds['graphs']}
+        else:
+            ret = None
         # """
         return JsonResponse(ret, safe=False)
 

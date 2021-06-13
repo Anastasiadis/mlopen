@@ -74,7 +74,10 @@ $(document).ready(function(){
         event.preventDefault();
         $('#loader').show();
 
-        var params = {"pipelines": document.getElementById("pipelines").elements[1].value,
+        type_obj = document.getElementById("type");
+        var params = {
+            "type": document.getElementById("type").elements[1].value,
+            "pipelines": document.getElementById("pipelines").elements[1].value,
             "input": document.getElementById("files").elements[1].value
         };
 

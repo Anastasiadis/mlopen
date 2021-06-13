@@ -27,14 +27,15 @@ class ImportView(TemplateView, FormView):
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST, request.FILES)
-        print("FORM IS")
-        print(form)
         if form.is_valid():
             try:
                 pipeline = request.FILES['file'].name
                 if not pipeline.endswith("control.py"):
                     return redirect(self.fail_url)
+                files = request.FILES.getlist('support_files')
+                io.save_pipeline_files(pipeline, files)
                 io.save_pipeline_file(request.FILES['file'])
+
                 temp = m.MLPipeline()
                 temp.control = pipeline[:-3]
                 temp.created_at = datetime.now()

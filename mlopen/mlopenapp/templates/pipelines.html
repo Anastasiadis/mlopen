@@ -575,6 +575,16 @@ select {
 
 /* END SPINNER */
 
+#type {
+  position: relative;
+  display: flex;
+  line-height: 3;
+  background: #559966;
+  color: white;
+  overflow: hidden;
+  border-radius: .25em;
+}
+
 </style>
 
 <script src="{% static '3rd_party/js/jquery-3.3.1.min.js' %}"></script>
@@ -586,8 +596,16 @@ select {
 
 
 <div class="container" id="pipeline_select">
-  <div class="left custom-select">
-    <p>Select pipeline to use</p>
+     <div class="left">
+    <p>Select action</p>
+         <form id="type" action="" method="post">
+        {% csrf_token %}
+
+        {{ form.type }}
+    </form>
+  </div>
+  <div class="left">
+    <p>Select pipeline</p>
      <form id="pipelines" action="" method="post">
         {% csrf_token %}
 
@@ -595,7 +613,7 @@ select {
     </form>
   </div>
   <div class="left">
-    <p>Select data to process</p>
+    <p>Select data</p>
          <form id="files" action="" method="post">
         {% csrf_token %}
 

@@ -2,7 +2,7 @@ import sys
 import os
 import pickle
 import datetime
-from django.db import models
+from ..models import models
 from django.core.files import File
 from .. import constants
 
@@ -76,3 +76,35 @@ def save_pipeline_file(f):
     with open(os.path.join(constants.CONTROL_DIR, f.name), 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
+
+
+def load_pipeline(pipeline):
+    try:
+        model_qs = pipeline.get_models()
+        args_qs = pipeline.get_args()
+        model = None
+        args = {}
+        for m in model_qs:
+            model = pickle.load(m.file.open('rb'))
+        for ar in args_qs:
+            args[ar.name] = pickle.load(ar.file.open('rb'))
+        return model, args
+    except Exception as e:
+        print(e)
+        return False
+
+
+def save_pipeline_files(pipeline, files):
+    if pipeline.endswith(".py"):
+        pipeline = pipeline[:-3]
+    dir_name = os.path.join(constants.CONTROL_DIR, pipeline)
+    try:
+        # Create target Directory
+        os.mkdir(dir_name)
+    except FileExistsError:
+        return False, "Directory already exists."
+    for f in files:
+        with open(os.path.join(dir_name, f.name), 'wb+') as destination:
+            for chunk in f.chunks():
+                destination.write(chunk)
+    return True, "Directory and files successfully created."

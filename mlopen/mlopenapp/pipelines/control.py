@@ -58,7 +58,7 @@ def run_pipeline(input, model, args):
     preds = {'data': [], 'columns': [], 'graphs': None}
     pos = 0
     for statement in input:
-        temp = predict_text(statement, args['tfidf'], model, False)
+        temp = predict_text(statement, args['tfidf_vect'], model, False)
         preds['data'].append([str(temp[0]), str(temp[1])])
         if temp[1] == 1:
             pos += 1
