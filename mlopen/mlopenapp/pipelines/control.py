@@ -51,7 +51,7 @@ def train(df_train,  df_test, *args):
         return tfidf[arg], s_a_model
 
 
-def run_pipeline(input, model, args):
+def run_pipeline(input, model, args, params=None):
     """
     Predicts the sentiment of a list of text statements
     """

@@ -1,22 +1,24 @@
 import os
-import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsClassifier
 
-from sklearn.metrics import classification_report, confusion_matrix
-
 from mlopenapp.utils import io_handler as io
+
+
+def get_params(run=True):
+    if run:
+        params = {"k": ("integer", {"default": 5}), "data": ("file")}
+        return params
 
 
 def train():
     io.save_pipeline([], [], os.path.basename(__file__))
 
 
-def run_pipeline(input, model, args):
+def run_pipeline(input, model, args, params=None):
     url = "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
 
     # Assign colum names to the dataset
@@ -37,7 +39,7 @@ def run_pipeline(input, model, args):
     X_train = scaler.transform(X_train)
     X_test = scaler.transform(X_test)
 
-    classifier = KNeighborsClassifier(n_neighbors=5)
+    classifier = KNeighborsClassifier(n_neighbors=int(params.get('k', 5)))
     classifier.fit(X_train, y_train)
 
     y_pred = classifier.predict(X_test)
@@ -52,6 +54,4 @@ def run_pipeline(input, model, args):
     print(preds['data'])
     print(preds['columns'])
     return preds
-
-#run_pipeline()
 

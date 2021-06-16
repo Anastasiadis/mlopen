@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from django import forms
 from mlopenapp.forms import UploadFileForm
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
@@ -21,7 +22,8 @@ class DataView(TemplateView, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = "Data"
+        context["title"] = "Input File Upload"
+        context["file_title"] = "input"
         context['template'] = "data.html"
         return context
 

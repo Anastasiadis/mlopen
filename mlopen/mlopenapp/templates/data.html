@@ -95,6 +95,7 @@ hr {
   width: 25%;
   padding: 0px;
   background: #efefef;
+  border-radius: 5px;
 }
 
 .left p {
@@ -102,6 +103,15 @@ hr {
   font-size: 18px;
   text-align: center;
   width: 100%;
+  }
+
+.left input {
+  color: #ffffff;
+  background-color:#559966;
+  font-size: 18px;
+  text-align: center;
+  width: 100%;
+  border-radius: 5px;
   }
 
 .left a {
@@ -117,14 +127,17 @@ hr {
   background-color:#559966;
   color:#ffffff;
   font-size:30px;
+  border-radius: 5px;
 }
 
-.left input {
-  float: right;
+.left select {
+  color: #ffffff;
   background-color:#559966;
-  color:#ffffff;
-  font-size:30px;
-}
+  font-size: 18px;
+  text-align: center;
+  width: 100%;
+  border-radius: 5px;
+  }
 
 .rcorners {
   border-radius: 5px;
@@ -584,10 +597,23 @@ select {
   border-radius: .25em;
 }
 
+/* START BUTTON */
+.save {
+  background: #559966;
+  color: white;
+  border-radius: 5px;
+  border: 1px solid #cccccc;
+}
+/* END BUTTON /*
+
 </style>
 
-
-</style>
+<script src="{% static '3rd_party/js/jquery-3.3.1.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'datatables/datatables.min.js' %}"></script>
+<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static '3rd_party/js/plotly-latest.min.js'' %}"></script>
+<script src="{% static 'js/pipeline.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/chosen.css' %}"></link>
 
 <div class="container">
 <form method="POST" class="post-form" enctype="multipart/form-data">
@@ -596,18 +622,17 @@ select {
 
     {% if form.name %}
     <div class="left">
+        <p>Insert name</p>
         {{ form.name.errors }}
         {{ form.name }}
     </div>
-    <hr>
     {% endif %}
     {% if form.file %}
     <div class="left">
-        <p>Insert main pipeline file</p>
+        <p>Insert {{ file_title }} file</p>
         {{ form.file.errors }}
         {{ form.file }}
     </div>
-    <hr>
     {% endif %}
     {% if form.support_files %}
     <div class="left">
@@ -615,10 +640,9 @@ select {
         {{ form.support_files.errors }}
         {{ form.support_files }}
     </div>
-    <hr>
     {% endif %}
         <button type="submit" class="save btn btn-default">Save</button>
 </form>
 </div>
-
+<hr>
 {% endblock %}

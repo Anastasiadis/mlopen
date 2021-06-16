@@ -74,12 +74,25 @@ $(document).ready(function(){
         event.preventDefault();
         $('#loader').show();
 
-        type_obj = document.getElementById("type");
+        var elements = document.getElementById("attrs").querySelectorAll('input', 'textarea');
+        var files = document.getElementById("attrs").querySelectorAll('select');
         var params = {
             "type": document.getElementById("type").elements[1].value,
             "pipelines": document.getElementById("pipelines").elements[1].value,
-            "input": document.getElementById("files").elements[1].value
+            "input": document.getElementById("files").elements[1].value,
         };
+        if (elements != null && elements.length > 0) {
+            for (var i = 0; i < elements.length; i++) {
+                params[elements[i].getAttribute("name")] = elements[i].getAttribute("value");
+            }
+        }
+        if (files != null && files.length > 0) {
+            for (var i = 0; i < files.length; i++) {
+                params[files[i].getAttribute("name")] = files[i].options[files[i].selectedIndex].text;
+            }
+        }
+
+        type_obj = document.getElementById("type");
 
         $.ajax({
             type: 'POST',
@@ -94,6 +107,7 @@ $(document).ready(function(){
                 $('#loader').hide();
                 if (data !== undefined && data !== null){
                     if (!Object.prototype.hasOwnProperty.call(data, 'empty')) {
+                        $('#attrs').hide();
                         $('#pipeline_results').show();
                         $('#pipeline_select').hide();
                         ret = data;
@@ -127,6 +141,32 @@ $(document).ready(function(){
         selectedTab = $(this).val();
         //$('#test').html($(this).val());
         repaint();
+    });
+
+    $('#id_pipelines').change(function() {
+        pipeline = $(this).val();
+        type = $('#id_type').val()
+        var params = {
+            "select_pipeline": 1,
+            "pipeline": pipeline,
+            "type": type
+        };
+        $.ajax({
+            type: 'POST',
+            url: '.',
+            beforeSend: function(request){
+                /* eslint-disable no-undef */
+                request.setRequestHeader('X-CSRFToken', csrftoken);
+                /* eslint-enable no-undef */
+            },
+            data: jQuery.param(params),
+            success: function(data){
+                if (data !== undefined && data !== null){
+                    $("#attrs").html(data.userform);
+                }
+            }
+
+            });
     });
 
     setTimeout(function(){

@@ -1,6 +1,8 @@
 import os
-from . import models
+
+from django import forms
 from django.conf import settings
+from . import models
 from .models import storages
 
 FILE_TYPES = {
@@ -16,3 +18,12 @@ FILE_DIRS = {
 }
 
 CONTROL_DIR = os.path.join(settings.BASE_DIR, 'mlopenapp/pipelines')
+
+PARAM_MAP = {
+    "string": forms.CharField,
+    "integer": forms.IntegerField,
+    "float": forms.FloatField,
+    "choice": forms.ChoiceField,
+    "file": forms.ModelChoiceField,
+    "bool": forms.BooleanField
+}

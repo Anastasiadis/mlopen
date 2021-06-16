@@ -96,6 +96,7 @@ hr {
   width: 25%;
   padding: 0px;
   background: #efefef;
+  border-radius: 5px;
 }
 
 .left p {
@@ -111,6 +112,7 @@ hr {
   font-size: 24px;
   text-align: center;
   width: 100%;
+  border-radius: 20px;
   }
 
 .left button {
@@ -118,14 +120,26 @@ hr {
   background-color:#559966;
   color:#ffffff;
   font-size:30px;
+  border-radius: 5px;
 }
 
 .left input {
-  float: right;
+  color: #ffffff;
   background-color:#559966;
-  color:#ffffff;
-  font-size:30px;
-}
+  font-size: 18px;
+  text-align: center;
+  width: 100%;
+  border-radius: 5px;
+  }
+
+.left select {
+  color: #ffffff;
+  background-color:#559966;
+  font-size: 18px;
+  text-align: center;
+  width: 100%;
+  border-radius: 5px;
+  }
 
 .rcorners {
   border-radius: 5px;
@@ -585,6 +599,15 @@ select {
   border-radius: .25em;
 }
 
+/* START BUTTON */
+.save {
+  background: #559966;
+  color: white;
+  border-radius: 5px;
+  border: 1px solid #cccccc;
+}
+/* END BUTTON /*
+
 </style>
 
 <script src="{% static '3rd_party/js/jquery-3.3.1.min.js' %}"></script>
@@ -620,7 +643,7 @@ select {
         {{ form.input }}
     </form>
   </div>
-    <button id="submit_btn">RUN</button>
+    <button id="submit_btn" class="save">Run</button>
 </div>
 
 <div class="container" id="pipeline_results">
@@ -636,8 +659,11 @@ select {
     </div>
     </div>
 </div>
+
+<hr id="tab-bottom-hr">
+
+<div class="container" id="attrs"></div>
 <div id="main_content">
-    <hr id="tab-bottom-hr">
         <div class="loader" id="loader">Loading...</div>
             <div id="graphs"></div>
             <div id="table_wrapper">

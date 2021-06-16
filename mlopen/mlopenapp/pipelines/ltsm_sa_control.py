@@ -408,7 +408,7 @@ def train(df_train, arg):
     return l_model, vocab, words, batch_size
 
 
-def run_pipeline(input, model, args):
+def run_pipeline(input, model, args, params=None):
     df = pandas.DataFrame(input, columns=['text'])
     preds = {'data': [], 'columns': [], 'graphs': None}
     arg = 'text'
