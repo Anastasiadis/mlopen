@@ -409,7 +409,8 @@ def train(df_train, arg):
 
 
 def run_pipeline(input, model, args, params=None):
-    df = pandas.DataFrame(input, columns=['text'])
+    input.open("r")
+    df = pandas.DataFrame(input.readlines(), columns=['text'])
     preds = {'data': [], 'columns': [], 'graphs': None}
     arg = 'text'
     print(df)

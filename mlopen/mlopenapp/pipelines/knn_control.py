@@ -10,7 +10,7 @@ from mlopenapp.utils import io_handler as io
 
 def get_params(run=True):
     if run:
-        params = {"k": ("integer", {"default": 5}), "data": ("file")}
+        params = {"k": ("integer", {"default": 5}), "data": ("file"), "column_names": ("string")}
         return params
 
 
@@ -19,13 +19,15 @@ def train():
 
 
 def run_pipeline(input, model, args, params=None):
-    url = "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
-
+    input.open("r")
     # Assign colum names to the dataset
-    names = ['sepal-length', 'sepal-width', 'petal-length', 'petal-width', 'Class']
+    if "column_names" in params and len(params['column_names']) > 0:
+        names = params['column_names'].split(",")
+    else:
+        names = ['sepal-length', 'sepal-width', 'petal-length', 'petal-width', 'Class']
 
     # Read dataset to pandas dataframe
-    dataset = pd.read_csv(url, names=names)
+    dataset = pd.read_csv(input, names=names)
 
     X = dataset.iloc[:, :-1].values
     y = dataset.iloc[:, 4].values

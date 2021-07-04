@@ -57,7 +57,8 @@ def run_pipeline(input, model, args, params=None):
     """
     preds = {'data': [], 'columns': [], 'graphs': None}
     pos = 0
-    for statement in input:
+    input.open("r")
+    for statement in input.readlines():
         temp = predict_text(statement, args['tfidf_vect'], model, False)
         preds['data'].append([str(temp[0]), str(temp[1])])
         if temp[1] == 1:

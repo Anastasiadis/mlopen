@@ -73,6 +73,7 @@ $(document).ready(function(){
     $('#submit_btn').click(function(event) {
         event.preventDefault();
         $('#loader').show();
+        $('#errdiv').html("");
 
         var elements = document.getElementById("attrs").querySelectorAll('input', 'textarea');
         var files = document.getElementById("attrs").querySelectorAll('select');
@@ -83,7 +84,7 @@ $(document).ready(function(){
         };
         if (elements != null && elements.length > 0) {
             for (var i = 0; i < elements.length; i++) {
-                params[elements[i].getAttribute("name")] = elements[i].getAttribute("value");
+                params[elements[i].getAttribute("name")] = elements[i].value;
             }
         }
         if (files != null && files.length > 0) {
@@ -107,11 +108,29 @@ $(document).ready(function(){
                 $('#loader').hide();
                 if (data !== undefined && data !== null){
                     if (!Object.prototype.hasOwnProperty.call(data, 'empty')) {
-                        $('#attrs').hide();
-                        $('#pipeline_results').show();
-                        $('#pipeline_select').hide();
-                        ret = data;
-                        paint();
+                        if (data.hasOwnProperty('error')) {
+                            $('#main_content').show();
+                            $('#errdiv').show();
+                            var hr = document.createElement("hr");
+                            var errtag = document.createElement("p");
+                            errtag.innerHTML = "<b>Message: </b>";
+                            var text = document.createTextNode(data.error_msg);
+                            errtag.appendChild(text);
+                            var errinfo = document.createElement("p");
+                            errinfo.innerHTML = "<b>Error info: </b>"
+                            var err = document.createTextNode(data.error_info);
+                            errinfo.appendChild(err);
+                            alert("Something went wrong");
+                            $('#errdiv').append(hr);
+                            $('#errdiv').append(errtag);
+                            $('#errdiv').append(errinfo);
+                        } else {
+                            $('#attrs').hide();
+                            $('#pipeline_results').show();
+                            $('#pipeline_select').hide();
+                            ret = data;
+                            paint();
+                        }
                     }
                     else {
                         $('#main_content').html('No updates returned for this specific query. Try a different query.');
