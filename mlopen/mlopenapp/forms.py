@@ -11,8 +11,9 @@ class UploadFileForm(forms.Form):
 
 class ImportPipelineForm(forms.Form):
     file = forms.FileField()
-    support_files = forms.FileField(
-        widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    support_files = forms.FileField(required=False,
+                                    widget=forms.ClearableFileInput(
+                                        attrs={'multiple': True, 'value': "YOLO"}))
 
 
 class PipelineSelectForm(forms.Form):

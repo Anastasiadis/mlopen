@@ -35,17 +35,25 @@ class PipelineView(TemplateView, FormView):
             clean_data = form.cleaned_data.copy()
             data = self.request.POST.get("select_pipeline", False)
             if data:
-                pipeline = self.request.POST.get("pipeline", False)
-                pipeline = Pipeline.objects.filter(id=int(pipeline)).first()
-                spec = importlib.util.spec_from_file_location(pipeline.control,
-                                                              os.path.join(
-                                                                  constants.CONTROL_DIR,
-                                                                  str(pipeline.control) + '.py'))
-                control = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(control)
-                params = control.get_params()
-                userform = params_handler.get_params_form(params)
-                return self.update_attrs(userform.as_table())
+                try:
+                    pipeline = self.request.POST.get("pipeline", False)
+                    pipeline = Pipeline.objects.filter(id=int(pipeline)).first()
+                    spec = importlib.util.spec_from_file_location(pipeline.control,
+                                                                  os.path.join(
+                                                                      constants.CONTROL_DIR,
+                                                                      str(pipeline.control) + '.py'))
+                    control = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(control)
+                    type = self.request.POST.get("type", False)
+                    print(type)
+                    print(pipeline)
+                    type = True if type and int(type) == 0 else False
+                    print("TYPE IS " + str(type))
+                    params = control.get_params(type)
+                    userform = params_handler.get_params_form(params)
+                    return self.update_attrs(userform.as_table())
+                except Exception as e:
+                    return self.update_attrs("")
             if "pipelines" in clean_data:
                 return self.update(clean_data)
             else:
@@ -57,6 +65,7 @@ class PipelineView(TemplateView, FormView):
 
     def form_valid(self, form):
         if self.request.is_ajax():
+            print("AH IT'S VALID")
             clean_data = form.cleaned_data.copy()
             data = self.request.POST.get("select_pipeline", False)
             if data:
@@ -103,11 +112,9 @@ class PipelineView(TemplateView, FormView):
         params = dict(self.request.POST)
         for name in ['type', 'pipelines', 'input']:
             params.pop(name, None)
-        print(params)
         for name, param in params.items():
             if isinstance(param, list) and len(param) == 1:
                 params[name] = param[0]
-        print(params)
 
         try:
             if clean_data["type"] == "0":
@@ -118,15 +125,14 @@ class PipelineView(TemplateView, FormView):
                     model = pipeline_ret[0]
                     args = pipeline_ret[1]
                 preds = control.run_pipeline(inpt, model, args, params)
-                ret = {'data': preds['data'], 'columns': preds['columns'], 'graphs': preds['graphs']}
+                ret = preds
             else:
-                control.train(input, params)
+                control.train(inpt, params)
                 ret = {"train": "Training completed! You may now run the " + str(pipeline) + " pipeline."}
         except Exception as e:
             ret = {'error': True,
                    'error_msg': "There was a problem during the excecution of your pipeline.",
                    'error_info': str(e)}
-            print("SENDIIIIIING")
 
         return JsonResponse(ret, safe=False)
 

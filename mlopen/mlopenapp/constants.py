@@ -25,5 +25,6 @@ PARAM_MAP = {
     "float": forms.FloatField,
     "choice": forms.ChoiceField,
     "file": forms.ModelChoiceField,
+    "upload": forms.FileField,
     "bool": forms.BooleanField
 }

@@ -93,9 +93,9 @@ hr {
   *display: inline;
   zoom: 1;
   width: 25%;
-  padding: 0px;
   background: #efefef;
   border-radius: 5px;
+  margin: 10px;
 }
 
 .left p {
@@ -105,21 +105,13 @@ hr {
   width: 100%;
   }
 
-.left input {
-  color: #ffffff;
-  background-color:#559966;
-  font-size: 18px;
-  text-align: center;
-  width: 100%;
-  border-radius: 5px;
-  }
-
 .left a {
   height: 40px;
   color: #031511;
   font-size: 24px;
   text-align: center;
   width: 100%;
+  border-radius: 20px;
   }
 
 .left button {
@@ -129,6 +121,15 @@ hr {
   font-size:30px;
   border-radius: 5px;
 }
+
+.left input {
+  color: #ffffff;
+  background-color:#559966;
+  font-size: 18px;
+  text-align: center;
+  width: 100%;
+  border-radius: 5px;
+  }
 
 .left select {
   color: #ffffff;
@@ -478,6 +479,20 @@ div.DTE_Footer_Content {
 }
 /* END GRAPHS */
 
+#table_error {
+  margin: auto;
+  padding: 10px;
+  width: 90%;
+}
+
+/* TEXT */
+#text {
+  margin: auto;
+  padding: 10px;
+  width: 90%;
+}
+/* END TEXT */
+
 /*START SELECT */
 /* Reset Select */
 select {
@@ -603,8 +618,29 @@ select {
   color: white;
   border-radius: 5px;
   border: 1px solid #cccccc;
+  padding-bottom: 10px;
 }
 /* END BUTTON /*
+
+/* ICON */
+.icon_upload {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    top:5px;
+    right: 20px;
+}
+/* END ICON */
+
+.innerleft {
+background: #559966;
+    flex: 1;
+  top:5px;
+  color: #fff;
+  cursor: pointer;
+  padding: 12.5px;
+
+}
 
 </style>
 
@@ -623,22 +659,28 @@ select {
     {% if form.name %}
     <div class="left">
         <p>Insert name</p>
-        {{ form.name.errors }}
-        {{ form.name }}
+        <div class="innerleft">
+            {{ form.name.errors }}
+            {{ form.name }}
+        </div>
     </div>
     {% endif %}
     {% if form.file %}
     <div class="left">
         <p>Insert {{ file_title }} file</p>
-        {{ form.file.errors }}
-        {{ form.file }}
+        <div class="innerleft">
+            {{ form.file.errors }}
+            {{ form.file }}
+        </div>
     </div>
     {% endif %}
     {% if form.support_files %}
     <div class="left">
-        <p>Insert all support files</p>
-        {{ form.support_files.errors }}
-        {{ form.support_files }}
+        <p>Insert support files</p>
+        <div class="innerleft">
+            {{ form.support_files.errors }}
+            {{ form.support_files }}
+        </div>
     </div>
     {% endif %}
         <button type="submit" class="save btn btn-default">Save</button>

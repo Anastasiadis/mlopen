@@ -22,27 +22,54 @@ function getCookieVal(name) {
 const csrftoken = getCookieVal('csrftoken');
 
 function generateTable() {
-    var cols = [];
-    for (const col in ret.columns) {
-        cols.push({title: ret.columns[col]});
-    }
+    if (ret.data !== undefined && ret.data !== null && !jQuery.isEmptyObject(ret.data)) {
+        var cols = [];
+        for (const col in ret.columns) {
+            cols.push({title: ret.columns[col]});
+        }
 
-    $('#table').DataTable( {
-        pagingType: "full_numbers",
-        data: ret.data,
-        columns: cols
-    } );
+        $('#table').DataTable( {
+            pagingType: "full_numbers",
+            data: ret.data,
+            columns: cols
+        } );
+    } else {
+        $('#table_error').html("There are no lists provided by this pipeline.");
+        $('#table_error').show();
+        $("#table").hide();
+    }
+}
+
+
+function generateText() {
+    try {
+        if (ret.text){
+            $("#text").html(ret.text);
+        }
+        else {
+            $("#text").html("There is no text provided by this pipeline");
+        }
+    } catch (error) {
+        $("#text").html("There is no text provided by this pipeline");
+    }
 }
 
 
 function repaint(){
             if (selectedTab == "Graphs"){
                 $('#table_wrapper').hide();
+                $("#text").hide();
                 $('#graphs').show();
+            }
+            else if (selectedTab == "Lists"){
+                $('#graphs').hide();
+                $("#text").hide();
+                $('#table_wrapper').show();
             }
             else {
                 $('#graphs').hide();
-                $('#table_wrapper').show();
+                $('#table_wrapper').hide();
+                $("#text").show();
             }
 }
 
@@ -56,14 +83,60 @@ function paint(){
                 Plotly.newPlot(container, ret.graphs.data, ret.graphs.layout);
                 $('#graphs').hide().show(0);
             }
+            else {
+                $('#graphs').html("There are no graphs provided by this pipeline.");
+            }
             generateTable();
+            generateText();
 
+}
+
+
+function getParams(){
+    pipeline = $('#id_pipelines').val();
+    type = $('#id_type').val();
+    var params = {
+        "select_pipeline": 1,
+        "pipeline": pipeline,
+        "type": type
+    };
+    $.ajax({
+        type: 'POST',
+        url: '.',
+        beforeSend: function(request){
+            /* eslint-disable no-undef */
+            request.setRequestHeader('X-CSRFToken', csrftoken);
+            /* eslint-enable no-undef */
+        },
+        data: jQuery.param(params),
+        success: function(data){
+            if (data !== undefined && data !== null){
+                $("#attrs").html(data.userform);
+            }
+            else{
+                $("#attrs").html("");
+            }
+        },
+        error: function(request){
+                var response = JSON.parse(request.responseText);
+                $('#loader').hide();
+                console.log(response.messages);
+                for (var key in response.messages) {
+                    if(!Object.prototype.hasOwnProperty.call(response.messages, key)){
+                        continue;
+                    }
+                    $('#id_' + key).addClass('is-invalid');
+                    $('#page_content').append('<div class="alert alert-danger" role="alert">' + response.messages[key] + '</div>');
+                }
+            }
+        });
 }
 
 
 $(document).ready(function(){
     $('#table_wrapper').hide();
     $('#graphs').hide();
+    $('#text').hide();
     $('#warpper').hide();
     $('#pipeline_results').hide();
     $('#loader').hide();
@@ -162,31 +235,8 @@ $(document).ready(function(){
         repaint();
     });
 
-    $('#id_pipelines').change(function() {
-        pipeline = $(this).val();
-        type = $('#id_type').val()
-        var params = {
-            "select_pipeline": 1,
-            "pipeline": pipeline,
-            "type": type
-        };
-        $.ajax({
-            type: 'POST',
-            url: '.',
-            beforeSend: function(request){
-                /* eslint-disable no-undef */
-                request.setRequestHeader('X-CSRFToken', csrftoken);
-                /* eslint-enable no-undef */
-            },
-            data: jQuery.param(params),
-            success: function(data){
-                if (data !== undefined && data !== null){
-                    $("#attrs").html(data.userform);
-                }
-            }
-
-            });
-    });
+    $('#id_type').change(getParams);
+    $('#id_pipelines').change(getParams);
 
     setTimeout(function(){
         $('#submit_btn').click();

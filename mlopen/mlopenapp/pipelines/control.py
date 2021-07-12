@@ -1,4 +1,6 @@
 import os
+
+import pandas
 from mlopenapp.pipelines import vectorization as vct,\
     text_preprocessing as tpp, \
     logistic_regression as lr, \
@@ -26,29 +28,44 @@ test_paths = [
 test_sentiments = [1, 0]
 
 
-def train(df_train,  df_test, *args):
+def get_params(run=True):
+    if not run:
+        params = {"train - pos samples": ("upload"), "train - neg samples": ("upload"),
+                  "test - pos samples": ("upload"), "test - neg samples": ("upload"), }
+        return params
+    else:
+        return ""
+
+
+def train(inpt, params=None):
     """
     Creates a model based on a train and a test dataframes, and calculates model metrics
     """
     print("Preparing Data. . .")
+    df_test = pandas.DataFrame()
+    df_train = pandas.DataFrame()
+    for key, val in params.items():
+        if "test" in str(key):
+            df_test = pandas.concat(df_test, data_handler.read_from_file(val))
+        if "train" in str(key):
+            df_train = pandas.concat(df_train, data_handler.read_from_file(val))
     tfidf = {}
     vector = {}
-    for arg in args:
-        corpus = df_train[arg].tolist()
-        tfidf[arg] = vct.fit_tf_idf(corpus)
-        vector[arg] = vct.tf_idf(corpus, tfidf[arg])
-        # TODO: add pos/neg frequencies method
-        # freqs = frq.build_freqs(corpus, df['sentiment'].tolist())
-        # x_pn = [frq.statement_to_freq(txt, freqs) for txt in corpus]
-        # x_posneg = frq.get_posneg(corpus, freqs)
-        s_a_model = lr.log_reg(vector[arg], df_train['sentiment'].tolist())
-        test_corpus = df_test[arg].tolist()
-        test_sentiment = df_test['sentiment'].tolist()
-        mtr.get_model_metrics(tfidf[arg], s_a_model, test_corpus, test_sentiment, True)
-        models = [(s_a_model, "logreg_model")]
-        args = [(tfidf[arg], "tfidf_vect")]
-        io.save_pipeline(models, args, os.path.basename(__file__))
-        return tfidf[arg], s_a_model
+    corpus = df_train["text"].tolist()
+    tfidf["text"] = vct.fit_tf_idf(corpus)
+    vector["text"] = vct.tf_idf(corpus, tfidf["text"])
+    # TODO: add pos/neg frequencies method
+    # freqs = frq.build_freqs(corpus, df['sentiment'].tolist())
+    # x_pn = [frq.statement_to_freq(txt, freqs) for txt in corpus]
+    # x_posneg = frq.get_posneg(corpus, freqs)
+    s_a_model = lr.log_reg(vector["text"], df_train['sentiment'].tolist())
+    test_corpus = df_test["text"].tolist()
+    test_sentiment = df_test['sentiment'].tolist()
+    mtr.get_model_metrics(tfidf["text"], s_a_model, test_corpus, test_sentiment, True)
+    models = [(s_a_model, "logreg_model")]
+    args = [(tfidf["text"], "tfidf_vect")]
+    io.save_pipeline(models, args, os.path.basename(__file__))
+    return tfidf["text"], s_a_model
 
 
 def run_pipeline(input, model, args, params=None):

@@ -388,20 +388,28 @@ def prepare_datasets(df_c, arg, train=True, words=None, vocab=None):
         return train_dl
 
 
-def train_lstm_model(df, arg):
+def train_lstm_model(df, arg, params):
     train_ds, train_dl, valid_ds, test_dl, words, vocab, vocab_size = prepare_datasets(df, arg, True)
     model = LSTM_variable_input(vocab_size, 50, 50)
     batch_size = 5000
     vocab_size = len(words)
     train_dl = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
     val_dl = DataLoader(valid_ds, batch_size=batch_size)
-    train_model(train_dl, val_dl, model, epochs=80, lr=0.1)
+    train_model(train_dl, val_dl, model, epochs=int(params["epochs"]), lr=0.1)
     return model, vocab, words, batch_size
 
 
-def train(df_train, arg):
+def get_params(run=True):
+    if run:
+        return ""
+    else:
+        params = {"epochs": ("integer", {"default": 80})}
+        return params
+
+
+def train(inpt, params=None):
     df_train = tfi.prepare_data(train_paths, train_sentiments)
-    l_model, vocab, words, batch_size = train_lstm_model(df_train, 'text')
+    l_model, vocab, words, batch_size = train_lstm_model(df_train, 'text', params)
     models = [(l_model, "lstm_model")]
     args = [(vocab, "lstm_vocab"), (words, "lstm_words")]
     io.save_pipeline(models, args, os.path.basename(__file__))

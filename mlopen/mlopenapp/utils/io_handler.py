@@ -9,20 +9,23 @@ from .. import constants
 
 def save(arg_object, name, save_to_db=False, type=None):
     try:
-        output = open(name + '.pkl', 'wb')
+        output = open(constants.FILE_DIRS[type] + '/' + name + '.pkl', 'wb')
         pickle.dump(arg_object, output, pickle.HIGHEST_PROTOCOL)
-        output.close()
         if save_to_db:
-            output = open(name + '.pkl', 'rb')
-            filefield = constants.FILE_TYPES[type](
+            filefield, _ = constants.FILE_TYPES[type].objects.get_or_create(
                 name=name,
-                created_at=datetime.datetime.now(),
-                updated_at=datetime.datetime.now(),
-                file=File(output))
+                defaults={
+                    'created_at': datetime.datetime.now(),
+                    'updated_at': datetime.datetime.now(),
+                    'file': File(output)
+                }
+            )
             filefield.save()
+            output.close()
             return filefield
+        output.close()
         return True
-    except AttributeError as e:
+    except Exception as e:
         print("EXCEPTION IS ")
         print(e)
         return False
@@ -45,17 +48,24 @@ def save_pipeline(models, args, name):
          temp = save(model[0], model[1], True, 'model')
          if type(temp) == bool:
             return False
+         print(name)
+         print(temp)
          pip_models.append(temp)
     for arg in args:
          temp = save(arg[0], arg[1], True, 'arg')
          if type(temp) == bool:
             return False
+         print(name)
+         print(temp)
          pip_args.append(temp)
-    pipeline = constants.FILE_TYPES['pipeline'](
+    pipeline, _ = constants.FILE_TYPES['pipeline'].objects.get_or_create(
         name=name,
-        control=name,
-        created_at=datetime.datetime.now(),
-        updated_at=datetime.datetime.now())
+        defaults={
+            'control': name,
+            'created_at': datetime.datetime.now(),
+            'updated_at': datetime.datetime.now()
+        }
+    )
     pipeline.save()
     for model in pip_models:
         pipeline.ml_models.add(model)
@@ -95,6 +105,8 @@ def load_pipeline(pipeline):
 
 
 def save_pipeline_files(pipeline, files):
+    if not files:
+        return True
     if pipeline.endswith(".py"):
         pipeline = pipeline[:-3]
     dir_name = os.path.join(constants.CONTROL_DIR, pipeline)

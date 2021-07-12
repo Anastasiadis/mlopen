@@ -17,6 +17,22 @@ def prepare_data(paths, sentiments):
     return df
 
 
+def read_from_files(text, sentiment):
+    """
+    Read all lines of a file
+    """
+    data = []
+    cnt = 0
+    with open(text, "r") as lines:
+        for line in lines.get_lines():
+            data.append([text, sentiment])
+            cnt += 1
+            if cnt > 1000:
+                break
+    df = pd.DataFrame(data, columns=['text', 'sentiment'])
+    return df
+
+
 def read_from_dir(dir, sentiment=None):
     """
     Read all files of a directory as statements

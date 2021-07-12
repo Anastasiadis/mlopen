@@ -20,6 +20,8 @@ def field_params(type, params):
             return PARAM_MAP[type](choices=choices)
     elif type == "file":
         return PARAM_MAP[type](queryset=InputFile.objects.all(), required=False)
+    elif type == "upload":
+        return PARAM_MAP[type](required=False)
 
 
 def get_params_form(params):
@@ -33,7 +35,6 @@ def get_params_form(params):
                     paramform.fields[name] = field_params(type[0], {})
             except Exception as e:
                 print(e)
-                pass
         else:
             try:
                 if type == "file":
@@ -42,5 +43,4 @@ def get_params_form(params):
                     paramform.fields[name] = PARAM_MAP[type]()
             except Exception as e:
                 print(e)
-                pass
     return paramform

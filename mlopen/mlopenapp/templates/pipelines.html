@@ -94,9 +94,9 @@ hr {
   *display: inline;
   zoom: 1;
   width: 25%;
-  padding: 0px;
   background: #efefef;
   border-radius: 5px;
+  margin: 10px;
 }
 
 .left p {
@@ -480,6 +480,20 @@ div.DTE_Footer_Content {
 }
 /* END GRAPHS */
 
+#table_error {
+  margin: auto;
+  padding: 10px;
+  width: 90%;
+}
+
+/* TEXT */
+#text {
+  margin: auto;
+  padding: 10px;
+  width: 90%;
+}
+/* END TEXT */
+
 /*START SELECT */
 /* Reset Select */
 select {
@@ -605,8 +619,35 @@ select {
   color: white;
   border-radius: 5px;
   border: 1px solid #cccccc;
+  padding-bottom: 10px;
 }
 /* END BUTTON /*
+
+/* ICON */
+.icon_upload {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    top:5px;
+    right: 20px;
+}
+/* END ICON */
+
+.innerleft {
+  display: inline-block;
+  *display: inline;
+  zoom: 1;
+  background: #559966;
+  flex: 1;
+  top:5px;
+  color: #fff;
+  cursor: pointer;
+  padding: 12.5px;
+  border-radius: 10px;
+  overflow: hidden;
+  perspective: 1px;
+  border-collapse: separate;
+}
 
 </style>
 
@@ -671,8 +712,10 @@ select {
             <div class="table">
             <table class="styled-table" id="table" width="100%">
             </table>
+            <div id="table_error"></div>
         </div>
     </div>
+    <div id="text"></div>
 </div>
 
 {% endblock %}

@@ -12,6 +12,8 @@ def get_params(run=True):
     if run:
         params = {"k": ("integer", {"default": 5}), "data": ("file"), "column_names": ("string")}
         return params
+    else:
+        return ""
 
 
 def train():
@@ -46,14 +48,11 @@ def run_pipeline(input, model, args, params=None):
 
     y_pred = classifier.predict(X_test)
 
-    print(y_pred)
     preds = {}
-    print(dataset.columns.values[:-1])
     data = [[str(x[0]), str(x[1]), str(x[2]), str(x[3]), y, z] for x, y, z in zip(X_test, y_pred, y_test)]
     preds['data'] = data
     preds['columns'] = list(dataset.columns.values)[:-1] + ['Predicted Class', 'Actual Class']
     preds['graphs'] = None
-    print(preds['data'])
-    print(preds['columns'])
+    preds['text'] = "This is a standard implementation of the <b>knn algorithm</b>."
     return preds
 
