@@ -26,7 +26,6 @@ def save(arg_object, name, save_to_db=False, type=None):
         output.close()
         return True
     except Exception as e:
-        print("EXCEPTION IS ")
         print(e)
         return False
 
@@ -48,15 +47,11 @@ def save_pipeline(models, args, name):
          temp = save(model[0], model[1], True, 'model')
          if type(temp) == bool:
             return False
-         print(name)
-         print(temp)
          pip_models.append(temp)
     for arg in args:
          temp = save(arg[0], arg[1], True, 'arg')
          if type(temp) == bool:
             return False
-         print(name)
-         print(temp)
          pip_args.append(temp)
     pipeline, _ = constants.FILE_TYPES['pipeline'].objects.get_or_create(
         name=name,

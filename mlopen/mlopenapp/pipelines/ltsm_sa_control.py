@@ -58,25 +58,13 @@ def word_2_vec(corpus):
     W2V_WINDOW = 7
     W2V_EPOCH = 100
     W2V_MIN_COUNT = 2
-    for c in corpus:
-        print(c)
-        if 'great' == c:
-            print('OK GREAT IS HERE')
     w2v_model = gensim.models.word2vec.Word2Vec(corpus, window=W2V_WINDOW,
                                                 min_count=W2V_MIN_COUNT)
-    print("most similar to 'evil : ",
-          w2v_model.wv.most_similar('evil'))
     w2v_model.build_vocab(corpus)
     words = w2v_model.wv.key_to_index
-    #print(words)
     vocab_size = len(words)
-    print("Vocab size", vocab_size)  # Train Word Embeddings
     w2v_model.train(corpus, total_examples=len(corpus), epochs=W2V_EPOCH)
-    print("most similar to 'evil : ",
-          w2v_model.wv.most_similar('evil'))
     w2v_model.train(corpus, total_examples=len(corpus), epochs=W2V_EPOCH)
-    print("most similar to 'evil : ",
-          w2v_model.wv.most_similar('evil'))
     # w2v_model.save('embeddings.txt')
     return w2v_model
 
@@ -84,7 +72,6 @@ def word_2_vec(corpus):
 def get_doc2vec_model(corpus):
     card_docs = [TaggedDocument(doc, [i])
                  for i, doc in enumerate(corpus)]
-    print(card_docs)
     model = Doc2Vec(vector_size=64, min_count=1, epochs=20)
     model = Doc2Vec(vector_size=64, window=2, min_count=1, workers=8, epochs=40)
     # build vocab
@@ -98,7 +85,6 @@ def get_doc2vec_model(corpus):
 def vectorize_text(model, corpus):
     card2vec = [model.infer_vector(statement) for statement in corpus]
     vec_list = np.array(card2vec).tolist()
-    print(vec_list)
     return vec_list
 
 
@@ -120,7 +106,6 @@ def nnff_tfidf(df_train, df_test, xtest, arg):
     y_train = torch.FloatTensor(df_train['sentiment'].tolist())
     y_test = torch.FloatTensor(df_test['sentiment'].tolist())
     before_train = criterion(y_pred.squeeze(), y_train)
-    print('Test loss before training', before_train.item())
 
     model.train()
     epoch = 80
@@ -138,9 +123,6 @@ def nnff_tfidf(df_train, df_test, xtest, arg):
     y_test = torch.FloatTensor([0])
     y_pred = model(x_test)
     after_train = criterion(y_pred.squeeze(), y_test)
-    print('Test loss after Training', after_train.item())
-    print(len(y_pred))
-    print(len(y_test))
     for pred, real in zip(y_pred.squeeze(), y_test):
         print("Prediction is "+ str(pred) + ", real is " + str(real))
     return model
@@ -220,7 +202,6 @@ def make_bow_vector(review_dict, sentence, device, num_labels=2):
     NUM_LABELS = num_labels
     vec = torch.zeros(VOCAB_SIZE, dtype=torch.float64, device=device)
     for word in sentence:
-        print(word)
         if word in review_dict.token2id:
             vec[review_dict.token2id[word]] += 1
     return vec.view(1, -1).float()
@@ -260,15 +241,9 @@ def train_model(train_dl, val_dl, model, epochs=10, lr=0.001):
         sum_loss = 0.0
         total = 0
         for x, y, l in train_dl:
-            print("TRAIN DL HAS")
-            print(y)
-            print(x)
-            print(l)
             x = x.long()
             y = y.long()
             y_pred = model(x, l)
-            print("TRAIN PRED IS")
-            print(y_pred)
             optimizer.zero_grad()
             loss = F.cross_entropy(y_pred, y)
             loss.backward()
@@ -328,14 +303,10 @@ def get_vocab(df, arg):
     df[arg + '_length'] = df[arg].apply(lambda x: len(x))
     counts = Counter()
     for index, row in df.iterrows():
-        #print("row text is")
-        #print(row[arg])
         counts.update(row[arg])
-    #print("num_words before:", len(counts.keys()))
     for word in list(counts):
         if counts[word] < 2:
             del counts[word]
-    #print("num_words after:", len(counts.keys()))
 
     # creating vocabulary
     vocab2index = {"": 0, "UNK": 1}
@@ -346,8 +317,7 @@ def get_vocab(df, arg):
 
     df['encoded'] = df[arg].apply(
         lambda x: np.array(encode_sentence(x, vocab2index)))
-    #print(df.head())
-    #print(vocab2index)
+
     return df, words, vocab2index
 
 
@@ -361,7 +331,6 @@ def prepare_datasets(df_c, arg, train=True, words=None, vocab=None):
         df['encoded'] = df[arg].apply(
             lambda x: np.array(encode_sentence(x, vocab)))
 
-    # print(Counter(df['sentiment']))
     batch_size = 5000
     vocab_size = len(words)
 
@@ -380,11 +349,7 @@ def prepare_datasets(df_c, arg, train=True, words=None, vocab=None):
         X_train = X
         y_train = y
         train_ds = ReviewsDataset(X_train, y_train)
-        #print("REVIEWS DATASET IS")
-        #print(train_ds)
-        #print("DATALOADER IS")
         train_dl = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
-        #print(train_dl)
         return train_dl
 
 
@@ -421,86 +386,18 @@ def run_pipeline(input, model, args, params=None):
     df = pandas.DataFrame(input.readlines(), columns=['text'])
     preds = {'data': [], 'columns': [], 'graphs': None}
     arg = 'text'
-    print(df)
-    print(arg)
-    print(df[arg])
     df['order'] = [i for i in range(0, len(df[arg]))]
-    print(df)
     dl = prepare_datasets(df, arg, False, args['lstm_words'], args['lstm_vocab'])
     for x, y, l in dl:
-        print(x)
-        print(y)
-        print(l)
-        print("Prediction is")
         y_hat = model(x, l)
         pred = torch.max(y_hat, 1)[1].numpy()
-        print(pred)
         pos = 0
         for p, i in zip(pred, y):
-            print("Prediction is")
             preds['data'].append([df[arg].iat[int(i)], str(p)])
             if p == 1:
                 pos += 1
-            print(p)
         preds['columns'] = ['Statement', 'Sentiment']
         preds['graphs'] = plotter.plotlify_pie(
             {'Positive': pos, 'Negative': len(preds['data']) - pos},
             "Number of Positive and Negative Reviews")
-        print(preds['graphs'])
         return preds
-
-
-
-# lstm model implementation
-"""
-df_train = tfi.prepare_data(train_paths, train_sentiments)
-l_model, vocab, words, batch_size = train(df_train, 'text')
-example = [["This movie was one very pleasant surprise. The awesome was incredible. Must see!", 0],
-            ["Worst thing I've ever seen in my life, avoid at all costs!", 1],
-            ["I liked it, I don't care what everybody says, it was one of my favorites.", 2],
-            ["Please, don't watch this! It's a total waste of time!", 3],
-            ["I thought I would not like this, but it turned out to be pretty good!", 4],
-            ["Who would have thought that such an expensive play would be so low quality", 5],
-            ["I would wait bad worst to rent this. It does not justify a full price ticket", 6],
-            ["Started awful, but it became too slow and unimaginative in the end", 7],
-            ["A very bad movie, awful visuals, horrible sound - I hated it.", 8],
-            ["I was sceptical at first, but this movie won me over - a great documentary!", 9]
-           ]
-df_ex = pandas.DataFrame(example, columns=['text', 'sentiment'])
-print("EXAMPLE DF IS")
-print(df_ex)
-run_pipeline(df_ex, 'text', l_model, {'lstm_words': words, 'lstm_vocab': vocab})
-
-"""
-
-
-# word2vec model
-"""
-df_train = tpp.process_text_df(tfi.prepare_data(train_paths, train_sentiments), 'text')
-df_test = tpp.process_text_df(tfi.prepare_data(test_paths, test_sentiments), 'text')
-w2vm = word_2_vec(df_train['text'].tolist())
-print(w2vm.wv['movie'])
-print(w2vm.wv["resentful"])
-vcts = []
-"""
-
-# feedforward implementation
-"""
-
-df_train = tpp.process_text_df(tfi.prepare_data(train_paths, train_sentiments), 'text')
-df_test = tpp.process_text_df(tfi.prepare_data(test_paths, test_sentiments), 'text')
-
-vectorizer = get_doc2vec_model(df_train['text'].tolist())
-vec_list = vectorize_text(vectorizer, df_train['text'].tolist())
-xtest = vectorize_text(vectorizer, [['bad', 'awful', 'sad', 'wasted']])
-df_train['vectors'] = vec_list
-vec_test_list = vectorize_text(vectorizer, df_test['text'].tolist())
-df_test['vectors'] = vec_test_list
-print(df_train)
-
-#word_2_vec(df_train['text'].tolist())
-
-ffmodel = nnff_tfidf(df_train, df_test, xtest, 'text')
-
-#ff_model(df_train, df_test, 'text', ff_nn_bow_model)
-"""
