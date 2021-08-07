@@ -1,98 +1,18 @@
 <!DOCTYPE html>
 {% load static %}
 <html>
+
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body {
-  font-family: "Lato", sans-serif;
-}
-
-.sidenav {
-  height: 100%;
-  width: 200px;
-  position: fixed;
-  z-index: 1;
-  top: 0;
-  left: 0;
-  background-color: #031511;
-  overflow-x: hidden;
-  padding-top: 20px;
-}
-
-.sidenav2 {
-  height: 100%;
-  width: 8px;
-  position: fixed;
-  z-index: 1;
-  top: 0;
-  left: 200px;
-  background-color: #dd6622;
-  overflow-x: hidden;
-  padding-top: 20px;
-}
-
-.sidenav a {
-  padding: 6px 8px 6px 16px;
-  text-decoration: none;
-  font-size: 18 px;
-  color: #f1f1f1;
-  display: block;
-}
-
-.sidenav a:hover {
-  color: #dd6622;
-}
-
-.main {
-  margin-left: 208px;
-  font-size: 12px;
-  padding: 0px 10px;
-}
-
-.icon {
-    background: url('your-image-url.jpg');
-    height: 16px;
-    width: 16px;
-    display: block;
-    /* Other styles here */
-}
-
-[class^="icon"] {
-  height: 42px;
-  width: 42 px;
-  position: relative;
-  top: 15px;
-  fill: #fff;
-}
-
-[class^="img"] {
-  height: 120px;
-  width: 120px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  position: relative;
-  fill: #fff;
-}
-
-hr {
-  background-color: #031511;
-  color: #031511;
-}
-
-@media screen and (max-height: 450px) {
-  .sidenav {padding-top: 15px;}
-  .sidenav a {font-size: 18px;}
-}
-
 h2, p {
   margin-left: auto;
   margin-right: auto;
   text-align: center;
 }
-
 </style>
+<link rel="stylesheet" href="{% static 'css/mlopen.css' %}"></link>
+
 </head>
 <body>
 

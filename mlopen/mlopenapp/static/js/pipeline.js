@@ -79,9 +79,16 @@ function paint(){
             $('#wait').hide();
             $('#warpper').show();
             if (ret.graphs !== undefined && ret.graphs !== null) {
+            var graphs = "";
                 var container = document.getElementById('graphs');
-                Plotly.newPlot(container, ret.graphs.data, ret.graphs.layout);
-                $('#graphs').hide().show(0);
+                //alert(({}).toString.call(ret.graphs).match(/\s([a-zA-Z]+)/)[1].toLowerCase());
+                for (var i = 0; i < ret.graphs.length; i++) {
+                    var gid = "createdGraph_" + i;
+                    var div = document.createElement('div');
+                    graphs += ret.graphs[i];
+                }
+                $('#graphs').html(graphs);
+                $('#graphs').show();
             }
             else {
                 $('#graphs').html("There are no graphs provided by this pipeline.");
@@ -198,11 +205,17 @@ $(document).ready(function(){
                             $('#errdiv').append(errtag);
                             $('#errdiv').append(errinfo);
                         } else {
-                            $('#attrs').hide();
-                            $('#pipeline_results').show();
-                            $('#pipeline_select').hide();
-                            ret = data;
-                            paint();
+                            if (data.hasOwnProperty('train')) {
+                                $('#errdiv').show();
+                                $('#errdiv').html(data.train);
+                            }
+                            else {
+                                $('#attrs').hide();
+                                $('#pipeline_results').show();
+                                $('#pipeline_select').hide();
+                                ret = data;
+                                paint();
+                            }
                         }
                     }
                     else {

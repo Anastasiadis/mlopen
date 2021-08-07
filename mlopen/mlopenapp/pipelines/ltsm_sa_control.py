@@ -397,7 +397,8 @@ def run_pipeline(input, model, args, params=None):
             if p == 1:
                 pos += 1
         preds['columns'] = ['Statement', 'Sentiment']
-        preds['graphs'] = plotter.plotlify_pie(
-            {'Positive': pos, 'Negative': len(preds['data']) - pos},
-            "Number of Positive and Negative Reviews")
+        div = plotter.pie_plot_from_lists(values=[pos, len(preds['data']) - pos],
+                                          labels=['Positive', 'Negative'],
+                                          title="Number of Positive and Negative Reviews")
+        preds['graphs'] = div
         return preds

@@ -16,8 +16,9 @@ def get_params(run=True):
         return ""
 
 
-def train():
-    io.save_pipeline([], [], os.path.basename(__file__))
+def train(inpt, params):
+    raise Exception("knn has no separate training phase. Run the pipeline with the training "
+                    + "set in the 'Select data' field.")
 
 
 def run_pipeline(input, model, args, params=None):
@@ -53,6 +54,25 @@ def run_pipeline(input, model, args, params=None):
     preds['data'] = data
     preds['columns'] = list(dataset.columns.values)[:-1] + ['Predicted Class', 'Actual Class']
     preds['graphs'] = None
-    preds['text'] = "This is a standard implementation of the <b>knn algorithm</b>."
+    preds['text'] = """
+    <div>This is a standard implementation of the <b>knn algorithm</b>.</div>
+    <div>From wikipedia:</div>
+    <p>In <a href="https:/www.wikipedia.com/wiki/Statistics" title="Statistics">statistics</a>,
+    the <b><i>k</i>-nearest neighbors algorithm</b> (<b><i>k</i>-NN</b>)
+    is a <a href="https:/www.wikipedia.com/wiki/Non-parametric_statistics" class="mw-redirect" 
+    title="Non-parametric statistics">non-parametric</a> <a href="https:/www.wikipedia.com/wiki/Classification" 
+    title="Classification">classification</a> method first developed by 
+    <a href="https:/www.wikipedia.com/wiki/Evelyn_Fix" title="Evelyn Fix">Evelyn Fix</a> and 
+    <a href="https:/www.wikipedia.com/wiki/Joseph_Lawson_Hodges_Jr." title="Joseph Lawson Hodges Jr.">Joseph Hodges</a>
+    in 1951,<sup id="cite_ref-1" class="reference"><a href="#cite_note-1">&#91;1&#93;
+    </a></sup> and later expanded by <a href="https:/www.wikipedia.com/wiki/Thomas_M._Cover" title="Thomas M. Cover">
+    Thomas Cover</a>. It is used for 
+    <a href="https:/www.wikipedia.com/wiki/Statistical_classification" title="Statistical classification">
+    classification</a> and <a href="https:/www.wikipedia.com/wiki/Regression_analysis" 
+    title="Regression analysis">regression</a>. In both cases, the input consists of the 
+    <i>k</i> closest training examples in <a href="https:/www.wikipedia.com/wiki/Data_set"
+    title="Data set">data set</a>. The output depends on whether <i>k</i>-NN 
+    is used for classification or regression.</p>
+    """
     return preds
 

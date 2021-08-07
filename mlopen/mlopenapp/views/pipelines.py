@@ -1,6 +1,5 @@
 import os
 import importlib.util
-import pandas
 
 from django import forms
 from mlopenapp.forms import PipelineSelectForm
@@ -8,8 +7,6 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from django.http import JsonResponse
 from ..models import MLPipeline as Pipeline
-from ..pipelines import text_preprocessing as tpp
-from ..pipelines.input import text_files_input as tfi
 
 from ..utils import io_handler as io
 
@@ -105,10 +102,6 @@ class PipelineView(TemplateView, FormView):
         control = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(control)
 
-        """params = control.get_params()
-        for field, _ in params.items():
-            print(field)"""
-
         params = dict(self.request.POST)
         for name in ['type', 'pipelines', 'input']:
             params.pop(name, None)
@@ -125,6 +118,9 @@ class PipelineView(TemplateView, FormView):
                     model = pipeline_ret[0]
                     args = pipeline_ret[1]
                 preds = control.run_pipeline(inpt, model, args, params)
+                if "graphs" in preds and preds["graphs"] not in [None, ""]:
+                    if type(preds["graphs"]) is not list:
+                        preds["graphs"] = [preds["graphs"]]
                 ret = preds
             else:
                 control.train(inpt, params)

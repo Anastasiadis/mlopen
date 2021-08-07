@@ -1,14 +1,10 @@
-import os
 from datetime import datetime
-from mlopenapp.forms import UploadFileForm
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from django.shortcuts import render, redirect
 from mlopenapp.forms import ImportPipelineForm
 import mlopenapp.models as m
 
-from ..pipelines import control, text_preprocessing as tpp
-from ..pipelines.input import text_files_input as tfi
 from ..utils import io_handler as io
 
 

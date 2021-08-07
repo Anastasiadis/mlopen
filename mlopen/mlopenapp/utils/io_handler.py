@@ -11,7 +11,9 @@ def save(arg_object, name, save_to_db=False, type=None):
     try:
         output = open(constants.FILE_DIRS[type] + '/' + name + '.pkl', 'wb')
         pickle.dump(arg_object, output, pickle.HIGHEST_PROTOCOL)
+        output.close()
         if save_to_db:
+            output = open(constants.FILE_DIRS[type] + '/' + name + '.pkl', 'rb')
             filefield, _ = constants.FILE_TYPES[type].objects.get_or_create(
                 name=name,
                 defaults={
@@ -21,9 +23,9 @@ def save(arg_object, name, save_to_db=False, type=None):
                 }
             )
             filefield.save()
+            print(filefield)
             output.close()
             return filefield
-        output.close()
         return True
     except Exception as e:
         print(e)
@@ -44,19 +46,20 @@ def save_pipeline(models, args, name):
     pip_models = []
     pip_args = []
     for model in models:
-         temp = save(model[0], model[1], True, 'model')
-         if type(temp) == bool:
+        temp = save(model[0], model[1], True, 'model')
+        if type(temp) == bool:
             return False
-         pip_models.append(temp)
+        pip_models.append(temp)
     for arg in args:
-         temp = save(arg[0], arg[1], True, 'arg')
-         if type(temp) == bool:
+        temp = save(arg[0], arg[1], True, 'arg')
+        if type(temp) == bool:
             return False
-         pip_args.append(temp)
+        pip_args.append(temp)
+    name = name[:-3] if name.endswith(".py") else name
     pipeline, _ = constants.FILE_TYPES['pipeline'].objects.get_or_create(
-        name=name,
+        control=name,
         defaults={
-            'control': name,
+            'name': name,
             'created_at': datetime.datetime.now(),
             'updated_at': datetime.datetime.now()
         }
